@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EnerProof — Energy Efficiency You Can Prove
 
-## Getting Started
+> **Deterministic Measurement & Verification (M&V) decision support platform for energy auditors, ESCOs, and the Azerbaijan Energy Efficiency Fund.**
 
-First, run the development server:
+**Competition:** CECECO Clean Energy Hackathon 2027  
+**Track:** Bringing Clean Energy to Everyday Life  
+**Founder:** Fizuli Hasanov  
+**Official Competition:** [https://www.cececo.org/projects/cececo-clean-energy-hackathon-2027](https://www.cececo.org/projects/cececo-clean-energy-hackathon-2027)  
+**GitHub Repository:** [https://github.com/fizuli20/enerproof](https://github.com/fizuli20/enerproof)  
+
+---
+
+## 1. Executive Summary
+
+Azerbaijan's subsidized electricity tariffs (0.125 AZN / ~$0.073 per kWh) and fixed public operational budgets create a challenging commercial environment: unassisted B2B SaaS energy dashboards cannot achieve economic viability. Simultaneously, institutional sustainability filings suffer from data provenance artifacts (such as copy-forwarded annual profiles and manual GHG calculation errors).
+
+**EnerProof** pivots from an unassisted dashboard to an **audit-to-action verification engine**. It provides certified energy auditors, ESCO contract managers, and fund administrators with:
+1. **Automated Pre-Intervention Screening Gates:** Rejects duplicate annual profiles, excessive missing data (>5%), zero flatlines (>720h), and physical violations.
+2. **Degree-Day Weather Normalization:** Fits multi-variable Ridge regression baselines against heating degree days (HDD) and cooling degree days (CDD) with ASHRAE Guideline 14 CV(RMSE) and NMBE compliance gates.
+3. **Interactive Engineering Calculators:** Simulates LED lighting retrofits, HVAC night setbacks, smart plug-load cutoffs, solar thermal hot water pre-heating, and boiler combustion tuning under localized utility tariffs.
+4. **Deterministic Evidence Gate:** Evaluates post-intervention apparent savings against calibrated empirical noise thresholds and ASHRAE Guideline 14 Annex B Fractional Savings Uncertainty (FSU ≤ 50%), issuing three clear classifications:
+   - `EVIDENCE_SUPPORTS_ESTIMATE`
+   - `ADDITIONAL_MEASUREMENT_REQUIRED`
+   - `INSUFFICIENT_EVIDENCE`
+5. **Multi-Building Portfolio Aggregator:** Models noise pooling across $K$ buildings in ESCO performance contracts while accounting for intra-site cross-building residual correlation ($\rho \approx 0.33$).
+6. **Investment-Grade PDF & Data Export:** 1-click client-side export of audit-grade PDF reports, JSON schemas, and CSV tables.
+
+---
+
+## 2. Interactive Demonstrations
+
+The platform includes three reproducible live demo tracks:
+- **Demo A: Baku Higher Oil School (BHOS) Energy Data Audit (`/app/audit?demo=bhos`)**  
+  Audits 36 monthly records (2022–2024). Automatically catches:
+  - 100% Data Duplication: All 36 monthly readings in 2024 duplicate 2023 figures identically.
+  - 10x Emissions Calculation Discrepancy: Calculated emissions from 995,575 kWh @ 0.5 kg/kWh is 497.79 metric tonnes, vs reported ~4,978 tonnes.
+  - Seasonality: 79.86% of annual natural gas is consumed during 5 heating months.
+- **Demo B: Student Residence Deep Energy Retrofit (`/app/interventions?demo=residence`)**  
+  Interactive evaluation of a 500-occupant university dormitory with degree-day baseline regression, 5 customizable ECMs, and PDF export.
+- **Demo C: Building Energy Research Lab (`/app/portfolio?demo=research`)**  
+  Inspects the 152-building empirical BDG2 benchmark, empirical MDE curves, and portfolio pooling.
+
+---
+
+## 3. Technology Stack & Architecture
+
+- **Framework:** Next.js 16 (App Router, Turbopack, React 19)
+- **Language:** TypeScript 5 (Strict Mode)
+- **Styling & Tokens:** Tailwind CSS v4 (`#F8F9F7` background, `#245C43` primary green, `#18211C` text)
+- **Testing:** Vitest 5 (19 automated unit tests verifying calculators, regression, Evidence Gate, BHOS audit, and PDF generation)
+- **PDF Generation:** jsPDF + jspdf-autotable (Client-side, vector text, audit tables, regulatory disclaimers)
+- **CSV Parsing:** Papa Parse (Streaming client-side parsing with zero server storage)
+- **Privacy:** 100% client-side computation. No building data is transmitted to external servers.
+
+---
+
+## 4. Getting Started Locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone https://github.com/fizuli20/enerproof.git
+cd enerproof
+
+# Install dependencies
+npm install
+
+# Run automated unit test suite
+npm test
+
+# Run Next.js production build
+npm run build
+
+# Start local production server
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the platform.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 5. Regulatory & Scientific Notice
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Evidence assessments and classifications generated by EnerProof are analytical decision-support outputs based on modeled counterfactual baselines (ASHRAE Guideline 14 Annex B / IPMVP). They do not constitute formal regulatory certification, statutory audit endorsement, or legal proof of causal attribution. All financial returns and payback periods are sensitive to local utility tariff structures (default: 0.125 AZN/kWh non-residential Baku rate).

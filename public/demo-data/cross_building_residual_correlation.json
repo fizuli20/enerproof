@@ -1,0 +1,18 @@
+{
+  "intra_site": {
+    "n_pairs": 1274,
+    "mean_corr": 0.3194,
+    "median_corr": 0.3441,
+    "std_corr": 0.3669,
+    "p05_corr": -0.3081,
+    "p95_corr": 0.8627
+  },
+  "inter_site": {
+    "n_pairs": 8879,
+    "mean_corr": 0.1098,
+    "median_corr": 0.0953,
+    "std_corr": 0.2651,
+    "p05_corr": -0.3207,
+    "p95_corr": 0.5747
+  }
+}

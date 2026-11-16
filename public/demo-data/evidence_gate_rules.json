@@ -1,0 +1,61 @@
+{
+  "version": "2.2.0-audited",
+  "standard_alignment": "Experimental Uncertainty Estimator based on ASHRAE Guideline 14-2014 Annex B",
+  "nominal_target_alpha": 0.05,
+  "target_power": 0.8,
+  "max_allowable_fsu_pct": 50.0,
+  "minimum_data_quality_gates": {
+    "max_missing_pct": 5.0,
+    "max_zero_pct": 25.0,
+    "max_consecutive_zeros_hours": 720,
+    "require_continuous_timestamps": true,
+    "forbid_negative_readings": true,
+    "forbid_duplicate_annual_profiles": true,
+    "require_active_consumption_split_level": true
+  },
+  "resolution_tier_benchmarks": {
+    "hourly": {
+      "recommended_model": "ridge_weather_regression",
+      "alternative_model": "HistGradientBoostingRegressor",
+      "empirical_mean_threshold_pct": 8.37,
+      "cohort_empirical_mde": "UNESTABLISHED (False Alarm Rate 7.0% > 5%)",
+      "ashrae_theoretical_mde_pct": 15.3,
+      "pooled_power_at_5pct": 0.427,
+      "historical_placebo_far": 0.2867,
+      "synthetic_null_fpr": 0.0698,
+      "quality_gate_status": "FAIL_BOTH_CONTROLS"
+    },
+    "daily": {
+      "recommended_model": "ridge_weather_regression",
+      "alternative_model": "changepoint_piecewise",
+      "empirical_mean_threshold_pct": 11.8,
+      "cohort_empirical_mde": "15.0%",
+      "ashrae_theoretical_mde_pct": 42.5,
+      "pooled_power_at_5pct": 0.469,
+      "historical_placebo_far": 0.2238,
+      "synthetic_null_fpr": 0.0421,
+      "quality_gate_status": "PASS_SYNTH_FAIL_PLACEBO"
+    },
+    "monthly": {
+      "recommended_model": "ridge_weather_regression",
+      "alternative_model": "historical_mean",
+      "unreliable_models": [
+        "HistGradientBoostingRegressor",
+        "ridge_calendar_regression"
+      ],
+      "empirical_mean_threshold_pct": 13.64,
+      "cohort_empirical_mde": "UNESTABLISHED (False Alarm Rate 6.8% > 5%)",
+      "ashrae_theoretical_mde_pct": 83.0,
+      "pooled_power_at_5pct": 0.364,
+      "historical_placebo_far": 0.1818,
+      "synthetic_null_fpr": 0.0681,
+      "quality_gate_status": "FAIL_BOTH_CONTROLS"
+    }
+  },
+  "evidence_classification_protocol": {
+    "EVIDENCE_SUPPORTS_ESTIMATE": "Apparent savings exceed calibrated Evidence Gate threshold and fractional uncertainty bounds are satisfied, supporting the statistical estimate under modeled counterfactual assumptions. Does not constitute formal regulatory certification or prove causal attribution.",
+    "ADDITIONAL_MEASUREMENT_REQUIRED": "Apparent savings detected or indicated, but statistical confidence bounds, reporting duration, or data quality require extended monitoring before estimate support can be claimed.",
+    "INSUFFICIENT_EVIDENCE": "Apparent savings fail to exceed the Evidence Gate threshold, uncertainty exceeds allowable bounds, or data quality gates are violated. Refuses estimate issuance."
+  },
+  "disclaimer": "None of these classifications constitutes formal regulatory certification or proves causal attribution."
+}
