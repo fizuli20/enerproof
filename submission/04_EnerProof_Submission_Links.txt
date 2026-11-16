@@ -1,0 +1,50 @@
+================================================================================
+ENERPROOF — CECECO CLEAN ENERGY HACKATHON 2027 SUBMISSION LINKS
+================================================================================
+
+Project Name: EnerProof
+Tagline: Energy efficiency you can prove.
+Track: Bringing Clean Energy to Everyday Life
+Competition: CECECO Clean Energy Hackathon 2027
+Official Competition URL: https://www.cececo.org/projects/cececo-clean-energy-hackathon-2027
+Founder: Fizuli Hasanov
+GitHub Account: https://github.com/fizuli20
+GitHub Repository: https://github.com/fizuli20/enerproof
+
+--------------------------------------------------------------------------------
+PRODUCTION DEPLOYMENT & LIVE ACCESS (NO AUTH REQUIRED FOR JUDGES)
+--------------------------------------------------------------------------------
+Primary Production URL: https://enerproof.vercel.app
+Vercel Production Deployment: https://enerproof-5mx4r545r-fizuli20s-projects.vercel.app
+
+--------------------------------------------------------------------------------
+INTERACTIVE DEMONSTRATION TRACKS
+--------------------------------------------------------------------------------
+Demo Hub:
+https://enerproof.vercel.app/demo
+
+Demo Track A — Baku Higher Oil School (BHOS) Energy Data Audit:
+https://enerproof.vercel.app/app/audit?demo=bhos
+
+Demo Track B — Student Residence Deep Retrofit & M&V:
+https://enerproof.vercel.app/app/interventions?demo=residence
+
+Demo Track C — Building Energy Research Lab & Portfolio Pooling:
+https://enerproof.vercel.app/app/portfolio?demo=research
+
+--------------------------------------------------------------------------------
+DOCUMENTATION & METHODOLOGY PAGES
+--------------------------------------------------------------------------------
+Scientific Research Dossier & Figure Gallery:
+https://enerproof.vercel.app/research
+
+Mathematical Methodology & ASHRAE 14 Annex B:
+https://enerproof.vercel.app/methodology
+
+About & Founder Motivation:
+https://enerproof.vercel.app/about
+
+Client-Side Privacy Policy:
+https://enerproof.vercel.app/privacy
+
+================================================================================
