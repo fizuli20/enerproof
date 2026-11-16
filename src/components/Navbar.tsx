@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShieldCheck, ArrowRight, BarChart3, BookOpen, Layers, Info } from "lucide-react";
+import { ShieldCheck, ArrowRight, BarChart3, BookOpen, Layers, Info, Sparkles } from "lucide-react";
 
 export function Navbar() {
   const pathname = usePathname();
 
   const navLinks = [
+    { href: "/judge", label: "Judge (3 Min)", icon: Sparkles },
     { href: "/demo", label: "Live Demos", icon: Layers },
     { href: "/research", label: "Research", icon: BarChart3 },
     { href: "/methodology", label: "Methodology", icon: BookOpen },

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ProjectProvider } from "@/lib/store/project-context";
 
 export const metadata: Metadata = {
   title: "EnerProof — Energy Efficiency You Can Prove",
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className="min-h-full flex flex-col bg-[#F8F9F7] text-[#18211C]">
-        {children}
+        <ProjectProvider>{children}</ProjectProvider>
       </body>
     </html>
   );

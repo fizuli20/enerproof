@@ -39,11 +39,18 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
             <Link
-              href="/demo"
+              href="/judge"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#245C43] hover:bg-[#1b4733] text-white text-sm font-semibold shadow-sm transition-all"
             >
-              Explore 3 Live Demos
+              <Sparkles className="w-4 h-4 text-emerald-300" />
+              Judge Experience (3 Mins)
               <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/demo"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-[#DFE5E0] bg-white hover:bg-black/5 text-[#18211C] text-sm font-semibold transition-all"
+            >
+              Explore 3 Live Demos
             </Link>
             <Link
               href="/app/audit"

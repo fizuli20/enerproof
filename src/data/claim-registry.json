@@ -1,0 +1,97 @@
+{
+  "version": "2.0.0-audited",
+  "last_updated": "2026-11-16",
+  "governance_note": "Single source of truth for all quantitative, empirical, and institutional statements in EnerProof. Enforces strict separation between experimentally observed findings, illustrative assumptions, calculated audits, and unestablished claims.",
+  "claims": [
+    {
+      "id": "CLM-001",
+      "wording": "The Baku Higher Oil School 2022 GHG emissions report exhibits a calculated factor-of-10 discrepancy (497.79 metric tonnes calculated vs ~4,978 tonnes reported from 995,575 kWh combined electricity at 0.5 kg CO2/kWh).",
+      "category": "CALCULATED",
+      "source": "Baku Higher Oil School Public Sustainability Filing 2022-2023; mathematical product of 995,575 kWh and reported 0.5 kg/kWh factor.",
+      "experiment_version": "Audit-Module-v2",
+      "limitations": "Demonstrates an arithmetic scaling error in public disclosure; does not infer intentional administrative misconduct or actual operational waste.",
+      "approved_for_public_presentation": true
+    },
+    {
+      "id": "CLM-002",
+      "wording": "Exactly 36 out of 36 monthly records (100%) across electricity and boiler fuel in the published BHOS 2024 report duplicate 2023 values identically.",
+      "category": "PUBLIC_SOURCE",
+      "source": "Baku Higher Oil School Public Energy Reports (2023 and 2024 comparative tables).",
+      "experiment_version": "Audit-Module-v2",
+      "limitations": "Reflects copy-forwarded data in published tables rather than verified operational meter telemetry.",
+      "approved_for_public_presentation": true
+    },
+    {
+      "id": "CLM-003",
+      "wording": "The non-residential electricity tariff in Azerbaijan is illustratively modeled at 0.125 AZN/kWh (12.5 qəpik / ~$0.073/kWh).",
+      "category": "ILLUSTRATIVE",
+      "source": "Tariff (Price) Council of the Republic of Azerbaijan regulatory decree schedule.",
+      "experiment_version": "Tariff-Schedule-2026",
+      "limitations": "Illustrative applicable rate. Specific institutional tariffs vary by voltage level, metering category, and state budgetary subsidies.",
+      "approved_for_public_presentation": true
+    },
+    {
+      "id": "CLM-004",
+      "wording": "Monthly utility bill regression models cannot reliably detect energy savings below 8-10% at 80% statistical power and 5% false-alarm ceiling.",
+      "category": "EXPERIMENTAL",
+      "source": "Building Data Genome 2 (BDG2) 152-building corrected benchmark.",
+      "experiment_version": "Experiment-2-Corrected",
+      "limitations": "Evaluated on 143 completed BDG2 buildings with 12 monthly degrees of freedom. In field applications, monthly utility bills remain insufficient for minor operational retrofits.",
+      "approved_for_public_presentation": true
+    },
+    {
+      "id": "CLM-005",
+      "wording": "Unpooled single buildings fail to achieve 80% statistical detection power for a 5% whole-building energy reduction.",
+      "category": "EXPERIMENTAL",
+      "source": "BDG2 152-building corrected benchmark; empirical detection power at 5% savings is 24.7% (daily) and 23.8% (hourly).",
+      "experiment_version": "Experiment-2-Corrected",
+      "limitations": "Applies to whole-building counterfactual interval regression. Does not apply to direct equipment-level submetering (IPMVP Option A/B), where power is isolated.",
+      "approved_for_public_presentation": true
+    },
+    {
+      "id": "CLM-006",
+      "wording": "Aggregating an ESCO portfolio of K=20 buildings raises empirical detection power for a 10% saving to 82.0%, bounded by an intra-site residual correlation floor (rho ≈ 0.33).",
+      "category": "EXPERIMENTAL",
+      "source": "BDG2 152-building empirical portfolio pooling simulations.",
+      "experiment_version": "Experiment-2-Corrected",
+      "limitations": "Observed on same-campus/regional university building clusters sharing weather microclimates. Does not guarantee 82% power for arbitrary unaligned user portfolios without covariance verification.",
+      "approved_for_public_presentation": true
+    },
+    {
+      "id": "CLM-007",
+      "wording": "Dormitory behavioral awareness campaigns without automated controls consistently deliver only 1.1% to 1.5% persistent whole-building energy savings.",
+      "category": "EXPERIMENTAL",
+      "source": "Peer-reviewed building energy behavior literature (Delmas et al., Nature Climate Change; BDG2 residence sub-cohort).",
+      "experiment_version": "Literature-Synthesis",
+      "limitations": "Behavioral nudges decay rapidly without structural automation. Savings >5% require physical equipment retrofits or automated scheduling.",
+      "approved_for_public_presentation": true
+    },
+    {
+      "id": "CLM-008",
+      "wording": "Research cohort provenance: The exploratory benchmark evaluated 149 buildings (59 dormitories, 2.61M hours). The corrected Experiment 2 cohort screened 152 buildings (82 lodging, 70 education) with 9 test-period dropouts recorded as cohort abstentions.",
+      "category": "EXPERIMENTAL",
+      "source": "Building Data Genome 2 (Miller et al., Scientific Data, 2020); EnerProof Experiment 2 audit pipeline.",
+      "experiment_version": "Experiment-1-vs-2-Ledger",
+      "limitations": "The 152 buildings represent both university education facilities and non-university commercial/residential lodging; they cannot be generalized as all university campuses.",
+      "approved_for_public_presentation": true
+    },
+    {
+      "id": "CLM-009",
+      "wording": "EnerProof commercial traction and customer relationships in Azerbaijan are in the proposed development stage.",
+      "category": "UNESTABLISHED",
+      "source": "Product Development Review.",
+      "experiment_version": "Product-Maturity-Audit",
+      "limitations": "EnerProof has not executed a live commercial energy-saving contract or confirmed paid customers. All institutional pilots are proposed.",
+      "approved_for_public_presentation": true
+    },
+    {
+      "id": "CLM-010",
+      "wording": "EnerProof determinations are analytical decision-support outputs based on modeled counterfactual baselines; they do not constitute formal regulatory certification, statutory audit endorsement, or legal proof of causal attribution.",
+      "category": "PROPOSED",
+      "source": "Legal & Standards Governance Review.",
+      "experiment_version": "Evidence-Gate-v2",
+      "limitations": "Formal certification requires licensed energy auditor sign-off and on-site engineering commissioning.",
+      "approved_for_public_presentation": true
+    }
+  ]
+}

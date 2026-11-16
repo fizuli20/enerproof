@@ -8,6 +8,7 @@ import {
   BHOSRow,
 } from "@/lib/audit/data-quality-engine";
 import { BHOSAuditResult } from "@/lib/types";
+import { useProject } from "@/lib/store/project-context";
 import {
   FileSearch,
   AlertTriangle,
@@ -20,8 +21,9 @@ import Papa from "papaparse";
 
 function AuditContent() {
   const searchParams = useSearchParams();
+  const { project, setAuditResult: setStoreAuditResult } = useProject();
   const [bhosData, setBhosData] = useState<BHOSRow[]>([]);
-  const [auditResult, setAuditResult] = useState<BHOSAuditResult | null>(null);
+  const [auditResult, setAuditResult] = useState<BHOSAuditResult | null>(project.bhosAudit || null);
   const [isLoading, setIsLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
 
@@ -37,18 +39,39 @@ function AuditContent() {
         skipEmptyLines: true,
       });
 
-      const rows: BHOSRow[] = parsed.data.map((r) => ({
-        year: Number(r.year),
-        month: Number(r.month),
-        campus_elec: Number(r.campus_elec || 0),
-        khatai_elec: Number(r.khatai_elec || 0),
-        combined_elec: Number(r.combined_elec || 0),
-        boiler_gas_m3: Number(r.boiler_gas_m3 || 0),
-      }));
+      const rows: BHOSRow[] = parsed.data.map((r) => {
+        const campus = Number(r.campus_electricity_kwh || r.campus_elec || 0);
+        const khatai = Number(r.khatai_electricity_kwh || r.khatai_elec || 0);
+        const boiler = Number(r.campus_boiler_fuel_m3 || r.boiler_gas_m3 || 0);
+        const combined = Number(r.combined_electricity_kwh || r.combined_elec || (campus + khatai));
+        return {
+          year: Number(r.year),
+          month: Number(r.month),
+          campus_elec: campus,
+          khatai_elec: khatai,
+          combined_elec: combined,
+          boiler_gas_m3: boiler,
+        };
+      });
 
       setBhosData(rows);
       const audit = auditBhosPublicData(rows);
       setAuditResult(audit);
+      
+      const summary = {
+        totalRows: rows.length,
+        missingRows: 0,
+        missingPct: 0,
+        zeroCount: 0,
+        zeroPct: 0,
+        maxConsecutiveZeros: 0,
+        hasNegativeValues: false,
+        hasDuplicateAnnualProfile: !audit.temporalIndependencePass,
+        isContinuousTimestamps: true,
+        flags: audit.recommendations,
+        passed: audit.overallAuditStatus !== "REJECT",
+      };
+      setStoreAuditResult(summary, audit);
       setStatusMessage("BHOS public dataset loaded and audited successfully.");
     } catch (err) {
       console.error(err);

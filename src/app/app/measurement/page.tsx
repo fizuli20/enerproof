@@ -1,17 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { generateMeasurementPlan } from "@/lib/measurement/planner";
-import { Ruler, ShieldCheck, Cpu, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { useProject } from "@/lib/store/project-context";
+import { Ruler, ShieldCheck, Cpu, Clock, CheckCircle2, AlertCircle, Layers } from "lucide-react";
 
 export default function MeasurementPage() {
+  const { project, setMeasurementPlan: setStoreMeasurementPlan } = useProject();
+
   const [category, setCategory] = useState<
     "lighting" | "hvac" | "plug_load" | "thermal_water" | "boiler" | "multi_measure"
   >("lighting");
   const [expectedSavingsPct, setExpectedSavingsPct] = useState<number>(15.0);
-  const [baselineCvRmsePct, setBaselineCvRmsePct] = useState<number>(10.0);
+  const [baselineCvRmsePct, setBaselineCvRmsePct] = useState<number>(
+    project.baselineResult?.cvRmsePct || 10.0
+  );
   const [hasSubmetering, setHasSubmetering] = useState<boolean>(false);
+
+  // Sync with project state if available
+  useEffect(() => {
+    if (project.baselineResult?.cvRmsePct) {
+      setBaselineCvRmsePct(project.baselineResult.cvRmsePct);
+    }
+  }, [project.baselineResult]);
 
   const plan = generateMeasurementPlan({
     category,
@@ -20,6 +32,11 @@ export default function MeasurementPage() {
     resolution: "daily",
     hasSubmetering,
   });
+
+  // Save generated plan to store
+  useEffect(() => {
+    setStoreMeasurementPlan(plan);
+  }, [category, expectedSavingsPct, baselineCvRmsePct, hasSubmetering]);
 
   return (
     <div className="flex-1 flex flex-col">
@@ -41,6 +58,11 @@ export default function MeasurementPage() {
                 Configure measure characteristics to generate an IPMVP-compliant measurement plan.
               </p>
             </div>
+            {project.baselineResult && (
+              <span className="badge-green text-xs font-semibold px-2.5 py-1 rounded">
+                Synced with Active Baseline (CV: {(project.baselineResult.cvRmsePct ?? project.baselineResult.trainingDiagnostics.cvRmsePct).toFixed(1)}%)
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs">

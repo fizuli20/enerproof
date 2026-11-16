@@ -1,10 +1,22 @@
 "use client";
 
 import React from "react";
-import { InterventionParams } from "@/lib/types";
+
+interface EcmChartItem {
+  id: string;
+  name: string;
+  annualKwhSavings: number;
+  annualGrossSavingsAzn?: number;
+  annualCostSavingsAzn?: number;
+  annualNetSavingsAzn?: number;
+  implementationCostAzn?: number;
+  capitalCostAzn?: number;
+  simplePaybackYears?: number | null;
+  avoidedCo2TonnesYear?: number | null;
+}
 
 interface SavingsBarChartProps {
-  interventions: InterventionParams[];
+  interventions: EcmChartItem[];
 }
 
 export function SavingsBarChart({ interventions }: SavingsBarChartProps) {
@@ -24,12 +36,15 @@ export function SavingsBarChart({ interventions }: SavingsBarChartProps) {
       <div className="space-y-4">
         {interventions.map((ecm) => {
           const pct = Math.round((ecm.annualKwhSavings / maxKwh) * 100);
+          const costSavings = ecm.annualGrossSavingsAzn ?? ecm.annualCostSavingsAzn ?? 0;
+          const capEx = ecm.implementationCostAzn ?? ecm.capitalCostAzn ?? 0;
+
           return (
             <div key={ecm.id} className="space-y-1.5">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-medium text-[#18211C]">{ecm.name}</span>
                 <span className="font-mono font-semibold text-[#245C43]">
-                  {ecm.annualKwhSavings.toLocaleString()} kWh/yr ({ecm.annualCostSavingsAzn.toLocaleString()} AZN)
+                  {ecm.annualKwhSavings.toLocaleString()} kWh/yr ({costSavings.toLocaleString()} AZN)
                 </span>
               </div>
               <div className="w-full bg-[#F8F9F7] h-3 rounded-full overflow-hidden border border-[#DFE5E0]">
@@ -39,9 +54,19 @@ export function SavingsBarChart({ interventions }: SavingsBarChartProps) {
                 ></div>
               </div>
               <div className="flex items-center justify-between text-[11px] text-[#68736C]">
-                <span>CapEx: {ecm.capitalCostAzn.toLocaleString()} AZN</span>
-                <span>Simple Payback: {ecm.simplePaybackYears.toFixed(1)} yrs</span>
-                <span>Avoided CO₂: {ecm.avoidedCo2TonnesYear.toFixed(1)} t/yr</span>
+                <span>CapEx: {capEx.toLocaleString()} AZN</span>
+                <span>
+                  Simple Payback:{" "}
+                  {ecm.simplePaybackYears !== null && ecm.simplePaybackYears !== undefined
+                    ? `${ecm.simplePaybackYears.toFixed(1)} yrs`
+                    : "No positive payback"}
+                </span>
+                <span>
+                  Avoided CO₂:{" "}
+                  {ecm.avoidedCo2TonnesYear !== null && ecm.avoidedCo2TonnesYear !== undefined
+                    ? `${ecm.avoidedCo2TonnesYear.toFixed(1)} t/yr`
+                    : "Unvalidated"}
+                </span>
               </div>
             </div>
           );

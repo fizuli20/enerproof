@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { SavingsBarChart } from "@/components/SavingsBarChart";
 import {
@@ -14,7 +14,9 @@ import {
   PlugLoadInput,
   ThermalWaterInput,
   BoilerOptimizationInput,
+  BaseEcmResult,
 } from "@/lib/interventions/calculators";
+import { useProject } from "@/lib/store/project-context";
 import {
   DEFAULT_AZN_TARIFF_PER_KWH,
   DEFAULT_AZN_TARIFF_PER_M3_GAS,
@@ -27,12 +29,29 @@ import {
   Clock,
   Sparkles,
   RotateCcw,
+  ShieldCheck,
+  AlertTriangle,
+  Layers,
 } from "lucide-react";
 
+type ScenarioMode = "conservative" | "base" | "optimistic";
+
 export default function InterventionsPage() {
-  // Global tariffs (editable)
-  const [elecTariff, setElecTariff] = useState<number>(DEFAULT_AZN_TARIFF_PER_KWH);
-  const [gasTariff, setGasTariff] = useState<number>(DEFAULT_AZN_TARIFF_PER_M3_GAS);
+  const { project, updateTariffs, setInterventions: setStoreInterventions } = useProject();
+
+  // Tariffs from project store
+  const [elecTariff, setElecTariff] = useState<number>(
+    project.tariffs.electricityTariffAznPerKwh || DEFAULT_AZN_TARIFF_PER_KWH
+  );
+  const [gasTariff, setGasTariff] = useState<number>(
+    project.tariffs.naturalGasTariffAznPerM3 || DEFAULT_AZN_TARIFF_PER_M3_GAS
+  );
+
+  // Scenario toggle
+  const [scenario, setScenario] = useState<ScenarioMode>("base");
+
+  // Safeguard confirmation
+  const [comfortVentilationConfirmed, setComfortVentilationConfirmed] = useState<boolean>(true);
 
   // Measure 1: Lighting
   const [lightingInput, setLightingInput] = useState<LightingRetrofitInput>({
@@ -42,6 +61,8 @@ export default function InterventionsPage() {
     operatingHoursPerDay: 12,
     operatingDaysPerYear: 300,
     costPerFixtureAzn: 35,
+    annualMaintenanceAzn: 300,
+    measurementCostAzn: 800,
   });
 
   // Measure 2: HVAC
@@ -50,8 +71,11 @@ export default function InterventionsPage() {
     baselineRuntimeHoursWeek: 70,
     optimizedRuntimeHoursWeek: 45,
     operatingWeeksYear: 26,
-    averageLoadFraction: 0.7,
+    averageLoadFactor: 0.7,
     implementationCostAzn: 4500,
+    comfortVentilationConfirmed: true,
+    annualRecurringSoftwareAzn: 400,
+    measurementCostAzn: 1200,
   });
 
   // Measure 3: Plug Load
@@ -62,6 +86,7 @@ export default function InterventionsPage() {
     idleHoursPerDay: 14,
     idleDaysPerYear: 365,
     smartPlugCostPerUnitAzn: 25,
+    measurementCostAzn: 600,
   });
 
   // Measure 4: Solar Thermal Hot Water
@@ -71,6 +96,8 @@ export default function InterventionsPage() {
     baselineEfficiency: 0.8,
     solarThermalFraction: 0.5,
     systemCostAzn: 28000,
+    annualMaintenanceAzn: 800,
+    measurementCostAzn: 1500,
   });
 
   // Measure 5: Boiler Combustion
@@ -79,6 +106,8 @@ export default function InterventionsPage() {
     currentEfficiencyPct: 78,
     optimizedEfficiencyPct: 88,
     equipmentCostAzn: 35000,
+    annualTuningServiceAzn: 1200,
+    measurementCostAzn: 2000,
   });
 
   // Active inclusion toggles
@@ -90,32 +119,130 @@ export default function InterventionsPage() {
     boiler: true,
   });
 
-  // Compute measures with active tariffs
-  const lightingRes = calculateLightingRetrofit({ ...lightingInput, tariffPerKwh: elecTariff });
-  const hvacRes = calculateHvacScheduling({ ...hvacInput, tariffPerKwh: elecTariff });
-  const plugRes = calculatePlugLoad({ ...plugInput, tariffPerKwh: elecTariff });
-  const thermalRes = calculateThermalWater({ ...thermalInput, gasTariffPerM3: gasTariff });
-  const boilerRes = calculateBoilerOptimization({ ...boilerInput, gasTariffPerM3: gasTariff });
+  // Apply scenario adjustments
+  const scenarioMultiplier =
+    scenario === "conservative" ? 0.85 : scenario === "optimistic" ? 1.15 : 1.0;
 
-  const activeMeasures = [
+  // Compute measures with active tariffs & scenario
+  const lightingRes = calculateLightingRetrofit({
+    ...lightingInput,
+    operatingHoursPerDay: Math.min(24, Math.max(0, lightingInput.operatingHoursPerDay)),
+    operatingDaysPerYear: Math.min(365, Math.max(0, lightingInput.operatingDaysPerYear)),
+    tariffPerKwh: elecTariff,
+    emissionsFactorKgPerKwh: project.tariffs.gridEmissionsFactorKgPerKwh,
+  });
+
+  const hvacRes = calculateHvacScheduling({
+    ...hvacInput,
+    baselineRuntimeHoursWeek: Math.min(168, Math.max(0, hvacInput.baselineRuntimeHoursWeek)),
+    optimizedRuntimeHoursWeek: Math.min(168, Math.max(0, hvacInput.optimizedRuntimeHoursWeek)),
+    operatingWeeksYear: Math.min(52, Math.max(0, hvacInput.operatingWeeksYear)),
+    averageLoadFactor: Math.min(1.0, Math.max(0.1, hvacInput.averageLoadFactor)),
+    comfortVentilationConfirmed,
+    tariffPerKwh: elecTariff,
+    emissionsFactorKgPerKwh: project.tariffs.gridEmissionsFactorKgPerKwh,
+  });
+
+  const plugRes = calculatePlugLoad({
+    ...plugInput,
+    idleHoursPerDay: Math.min(24, Math.max(0, plugInput.idleHoursPerDay)),
+    idleDaysPerYear: Math.min(365, Math.max(0, plugInput.idleDaysPerYear)),
+    tariffPerKwh: elecTariff,
+    emissionsFactorKgPerKwh: project.tariffs.gridEmissionsFactorKgPerKwh,
+  });
+
+  const thermalRes = calculateThermalWater({
+    ...thermalInput,
+    solarThermalFraction: Math.min(0.9, Math.max(0.1, thermalInput.solarThermalFraction)),
+    gasTariffPerM3: gasTariff,
+  });
+
+  const boilerRes = calculateBoilerOptimization({
+    ...boilerInput,
+    gasTariffPerM3: gasTariff,
+  });
+
+  const rawActiveMeasures = [
     enabled.lighting ? lightingRes : null,
     enabled.hvac ? hvacRes : null,
     enabled.plug ? plugRes : null,
     enabled.thermal ? thermalRes : null,
     enabled.boiler ? boilerRes : null,
-  ].filter(Boolean) as typeof lightingRes[];
+  ].filter(Boolean) as BaseEcmResult[];
 
-  const totalCapEx = activeMeasures.reduce((a, b) => a + b.capitalCostAzn, 0);
+  // Apply scenario scaling to savings
+  const activeMeasures = rawActiveMeasures.map((ecm) => {
+    if (scenario === "base") return ecm;
+    const scaledKwh = Math.round(ecm.annualKwhSavings * scenarioMultiplier);
+    const scaledFuel = ecm.annualFuelSavingsM3
+      ? Math.round(ecm.annualFuelSavingsM3 * scenarioMultiplier)
+      : undefined;
+    const scaledGross = Math.round(ecm.annualGrossSavingsAzn * scenarioMultiplier);
+    const scaledNet = scaledGross - ecm.annualRecurringCostAzn;
+    const simplePaybackYears =
+      scaledNet > 0
+        ? Math.round((ecm.totalInitialInvestmentAzn / scaledNet) * 10) / 10
+        : null;
+
+    return {
+      ...ecm,
+      annualKwhSavings: scaledKwh,
+      annualFuelSavingsM3: scaledFuel,
+      annualGrossSavingsAzn: scaledGross,
+      annualNetSavingsAzn: scaledNet,
+      simplePaybackYears,
+      avoidedCo2TonnesYear:
+        ecm.avoidedCo2TonnesYear !== null
+          ? Math.round(ecm.avoidedCo2TonnesYear * scenarioMultiplier * 10) / 10
+          : null,
+    };
+  });
+
+  // Keep store in sync
+  useEffect(() => {
+    setStoreInterventions(activeMeasures);
+  }, [
+    enabled,
+    elecTariff,
+    gasTariff,
+    scenario,
+    comfortVentilationConfirmed,
+    lightingInput,
+    hvacInput,
+    plugInput,
+    thermalInput,
+    boilerInput,
+  ]);
+
+  const handleTariffChange = (newElec: number, newGas: number) => {
+    setElecTariff(newElec);
+    setGasTariff(newGas);
+    updateTariffs({
+      electricityTariffAznPerKwh: newElec,
+      naturalGasTariffAznPerM3: newGas,
+    });
+  };
+
+  const totalCapEx = activeMeasures.reduce((a, b) => a + (b.implementationCostAzn || 0), 0);
+  const totalMAndVCost = activeMeasures.reduce((a, b) => a + (b.measurementCostAzn || 0), 0);
+  const totalInvestmentAzn = activeMeasures.reduce((a, b) => a + (b.totalInitialInvestmentAzn || 0), 0);
   const totalKwh = activeMeasures.reduce((a, b) => a + b.annualKwhSavings, 0);
-  const totalSavingsAzn = activeMeasures.reduce((a, b) => a + b.annualCostSavingsAzn, 0);
-  const totalCo2 = activeMeasures.reduce((a, b) => a + b.avoidedCo2TonnesYear, 0);
-  const combinedPayback = totalSavingsAzn > 0 ? Math.round((totalCapEx / totalSavingsAzn) * 10) / 10 : 999.0;
+  const totalGrossSavingsAzn = activeMeasures.reduce((a, b) => a + b.annualGrossSavingsAzn, 0);
+  const totalRecurringCostAzn = activeMeasures.reduce((a, b) => a + b.annualRecurringCostAzn, 0);
+  const totalNetSavingsAzn = activeMeasures.reduce((a, b) => a + b.annualNetSavingsAzn, 0);
+  const totalCo2 = activeMeasures.reduce((a, b) => a + (b.avoidedCo2TonnesYear || 0), 0);
+
+  // Deterministic Simple Payback: Returns null if net savings <= 0 (never 999 years)
+  const combinedPaybackYears =
+    totalNetSavingsAzn > 0
+      ? Math.round((totalInvestmentAzn / totalNetSavingsAzn) * 10) / 10
+      : null;
 
   return (
     <div className="flex-1 flex flex-col">
       <AppHeader
         title="3. Energy Conservation Measures (ECMs) & Financials"
-        subtitle="Interactive engineering calculators with localized Azerbaijan utility tariffs and simple payback analysis."
+        subtitle="Physically bounded engineering calculators with full lifecycle accounting and localized Azerbaijan tariffs."
       />
 
       <main className="p-8 max-w-7xl w-full space-y-8">
@@ -125,22 +252,55 @@ export default function InterventionsPage() {
             <div>
               <h3 className="text-sm font-bold text-[#18211C] flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-[#245C43]" />
-                Utility Tariffs & Economic Parameters (Azerbaijan)
+                Utility Tariffs & Sensitivity Scenario (Azerbaijan)
               </h3>
               <p className="text-xs text-[#68736C]">
-                Subsidized non-residential rates decree. Adjust tariffs below to model market price reform scenarios.
+                Subsidized non-residential rate assumption: 0.125 AZN/kWh electricity, 0.25 AZN/m³ gas.
               </p>
             </div>
-            <button
-              onClick={() => {
-                setElecTariff(DEFAULT_AZN_TARIFF_PER_KWH);
-                setGasTariff(DEFAULT_AZN_TARIFF_PER_M3_GAS);
-              }}
-              className="inline-flex items-center gap-1.5 text-xs text-[#68736C] hover:text-[#18211C]"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Reset Defaults
-            </button>
+            <div className="flex items-center gap-3">
+              {/* Scenario Toggle */}
+              <div className="inline-flex rounded-lg border border-[#DFE5E0] p-0.5 bg-[#F8F9F7] text-xs font-semibold">
+                <button
+                  onClick={() => setScenario("conservative")}
+                  className={`px-2.5 py-1 rounded-md transition-all ${
+                    scenario === "conservative"
+                      ? "bg-white text-[#B74740] shadow-sm font-bold"
+                      : "text-[#68736C] hover:text-[#18211C]"
+                  }`}
+                >
+                  Conservative (-15%)
+                </button>
+                <button
+                  onClick={() => setScenario("base")}
+                  className={`px-2.5 py-1 rounded-md transition-all ${
+                    scenario === "base"
+                      ? "bg-white text-[#245C43] shadow-sm font-bold"
+                      : "text-[#68736C] hover:text-[#18211C]"
+                  }`}
+                >
+                  Base Case
+                </button>
+                <button
+                  onClick={() => setScenario("optimistic")}
+                  className={`px-2.5 py-1 rounded-md transition-all ${
+                    scenario === "optimistic"
+                      ? "bg-white text-[#245C43] shadow-sm font-bold"
+                      : "text-[#68736C] hover:text-[#18211C]"
+                  }`}
+                >
+                  Optimistic (+15%)
+                </button>
+              </div>
+
+              <button
+                onClick={() => handleTariffChange(DEFAULT_AZN_TARIFF_PER_KWH, DEFAULT_AZN_TARIFF_PER_M3_GAS)}
+                className="inline-flex items-center gap-1.5 text-xs text-[#68736C] hover:text-[#18211C]"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                Reset Defaults
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -155,7 +315,7 @@ export default function InterventionsPage() {
                   min="0.05"
                   max="0.50"
                   value={elecTariff}
-                  onChange={(e) => setElecTariff(parseFloat(e.target.value) || 0.125)}
+                  onChange={(e) => handleTariffChange(parseFloat(e.target.value) || 0.125, gasTariff)}
                   className="w-36 p-2 rounded border border-[#DFE5E0] bg-[#F8F9F7] font-mono text-sm text-[#18211C]"
                 />
                 <span className="text-[#68736C]">
@@ -175,7 +335,7 @@ export default function InterventionsPage() {
                   min="0.10"
                   max="1.00"
                   value={gasTariff}
-                  onChange={(e) => setGasTariff(parseFloat(e.target.value) || 0.25)}
+                  onChange={(e) => handleTariffChange(elecTariff, parseFloat(e.target.value) || 0.25)}
                   className="w-36 p-2 rounded border border-[#DFE5E0] bg-[#F8F9F7] font-mono text-sm text-[#18211C]"
                 />
                 <span className="text-[#68736C]">
@@ -186,50 +346,58 @@ export default function InterventionsPage() {
           </div>
         </div>
 
-        {/* Portfolio Summary Bar */}
+        {/* Lifecycle Portfolio Summary Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           <div className="card-base p-4">
-            <div className="text-xs text-[#68736C]">Total Retrofit CapEx</div>
+            <div className="text-xs text-[#68736C]">Total Initial Investment</div>
             <div className="text-xl font-bold text-[#18211C] mt-1 font-mono">
-              {totalCapEx.toLocaleString()} AZN
+              {totalInvestmentAzn.toLocaleString()} AZN
             </div>
             <div className="text-[11px] text-[#68736C] mt-1">
-              ~${Math.round(totalCapEx / 1.7).toLocaleString()} USD
+              CapEx: {totalCapEx.toLocaleString()} • M&V: {totalMAndVCost.toLocaleString()}
             </div>
           </div>
 
           <div className="card-base p-4">
-            <div className="text-xs text-[#68736C]">Annual Energy Savings</div>
+            <div className="text-xs text-[#68736C]">Gross Utility Savings</div>
             <div className="text-xl font-bold text-[#245C43] mt-1 font-mono">
-              {totalKwh.toLocaleString()} kWh
+              {totalGrossSavingsAzn.toLocaleString()} AZN/yr
             </div>
-            <div className="text-[11px] text-[#245C43] mt-1">Equivalent site savings</div>
+            <div className="text-[11px] text-[#245C43] mt-1">
+              {totalKwh.toLocaleString()} kWh/yr total
+            </div>
           </div>
 
           <div className="card-base p-4">
-            <div className="text-xs text-[#68736C]">Annual Utility Savings</div>
-            <div className="text-xl font-bold text-[#245C43] mt-1 font-mono">
-              {totalSavingsAzn.toLocaleString()} AZN/yr
+            <div className="text-xs text-[#68736C]">Annual Recurring O&M</div>
+            <div className="text-xl font-bold text-[#B74740] mt-1 font-mono">
+              -{totalRecurringCostAzn.toLocaleString()} AZN/yr
+            </div>
+            <div className="text-[11px] text-[#68736C] mt-1">Maintenance & telemetry</div>
+          </div>
+
+          <div className="card-base p-4">
+            <div className="text-xs text-[#68736C]">Net Annual Cash Flow</div>
+            <div
+              className={`text-xl font-bold mt-1 font-mono ${
+                totalNetSavingsAzn > 0 ? "text-[#245C43]" : "text-[#B74740]"
+              }`}
+            >
+              {totalNetSavingsAzn.toLocaleString()} AZN/yr
             </div>
             <div className="text-[11px] text-[#68736C] mt-1">
-              ~${Math.round(totalSavingsAzn / 1.7).toLocaleString()} USD/yr
+              Gross savings minus recurring
             </div>
-          </div>
-
-          <div className="card-base p-4">
-            <div className="text-xs text-[#68736C]">Combined Payback</div>
-            <div className="text-xl font-bold text-[#18211C] mt-1 font-mono">
-              {combinedPayback.toFixed(1)} years
-            </div>
-            <div className="text-[11px] text-[#245C43] mt-1">Attractive ESCO ROI</div>
           </div>
 
           <div className="card-base p-4 col-span-2 sm:col-span-1">
-            <div className="text-xs text-[#68736C]">Avoided Emissions</div>
+            <div className="text-xs text-[#68736C]">Simple Payback Period</div>
             <div className="text-xl font-bold text-[#18211C] mt-1 font-mono">
-              {totalCo2.toFixed(1)} t CO₂/yr
+              {combinedPaybackYears !== null ? `${combinedPaybackYears.toFixed(1)} years` : "No positive payback"}
             </div>
-            <div className="text-[11px] text-[#68736C] mt-1">Clean energy impact</div>
+            <div className="text-[11px] text-[#68736C] mt-1">
+              {combinedPaybackYears !== null ? "Total investment / net annual" : "Net annual savings ≤ 0"}
+            </div>
           </div>
         </div>
 
@@ -245,7 +413,7 @@ export default function InterventionsPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="badge-green text-[10px] font-semibold px-2 py-0.5 rounded">
-                    Lighting
+                    Lighting (Option A)
                   </span>
                   <input
                     type="checkbox"
@@ -262,9 +430,10 @@ export default function InterventionsPage() {
                     <label className="text-[#68736C]">Fixture Count:</label>
                     <input
                       type="number"
+                      min="0"
                       value={lightingInput.fixtureCount}
                       onChange={(e) =>
-                        setLightingInput({ ...lightingInput, fixtureCount: parseInt(e.target.value) || 0 })
+                        setLightingInput({ ...lightingInput, fixtureCount: Math.max(0, parseInt(e.target.value) || 0) })
                       }
                       className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
                     />
@@ -274,11 +443,12 @@ export default function InterventionsPage() {
                       <label className="text-[#68736C]">Baseline Watts:</label>
                       <input
                         type="number"
+                        min="1"
                         value={lightingInput.baselineWattsPerFixture}
                         onChange={(e) =>
                           setLightingInput({
                             ...lightingInput,
-                            baselineWattsPerFixture: parseInt(e.target.value) || 0,
+                            baselineWattsPerFixture: Math.max(1, parseInt(e.target.value) || 0),
                           })
                         }
                         className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
@@ -288,11 +458,46 @@ export default function InterventionsPage() {
                       <label className="text-[#68736C]">LED Watts:</label>
                       <input
                         type="number"
+                        min="1"
                         value={lightingInput.retrofitWattsPerFixture}
                         onChange={(e) =>
                           setLightingInput({
                             ...lightingInput,
-                            retrofitWattsPerFixture: parseInt(e.target.value) || 0,
+                            retrofitWattsPerFixture: Math.max(1, parseInt(e.target.value) || 0),
+                          })
+                        }
+                        className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="text-[#68736C]">Operating Hrs/Day:</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="24"
+                        value={lightingInput.operatingHoursPerDay}
+                        onChange={(e) =>
+                          setLightingInput({
+                            ...lightingInput,
+                            operatingHoursPerDay: Math.min(24, Math.max(0, parseFloat(e.target.value) || 0)),
+                          })
+                        }
+                        className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[#68736C]">Operating Days/Yr:</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="365"
+                        value={lightingInput.operatingDaysPerYear}
+                        onChange={(e) =>
+                          setLightingInput({
+                            ...lightingInput,
+                            operatingDaysPerYear: Math.min(365, Math.max(0, parseInt(e.target.value) || 0)),
                           })
                         }
                         className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
@@ -307,8 +512,13 @@ export default function InterventionsPage() {
                   <span>{lightingRes.annualKwhSavings.toLocaleString()} kWh/yr</span>
                 </div>
                 <div className="flex justify-between text-[#68736C]">
-                  <span>Cost Savings: {lightingRes.annualCostSavingsAzn.toLocaleString()} AZN/yr</span>
-                  <span>Payback: {lightingRes.simplePaybackYears.toFixed(1)} yrs</span>
+                  <span>Net Savings: {lightingRes.annualNetSavingsAzn.toLocaleString()} AZN/yr</span>
+                  <span>
+                    Payback:{" "}
+                    {lightingRes.simplePaybackYears !== null
+                      ? `${lightingRes.simplePaybackYears.toFixed(1)} yrs`
+                      : "No payback"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -318,7 +528,7 @@ export default function InterventionsPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="badge-blue text-[10px] font-semibold px-2 py-0.5 rounded">
-                    HVAC Automation
+                    HVAC (Option B/C)
                   </span>
                   <input
                     type="checkbox"
@@ -335,9 +545,10 @@ export default function InterventionsPage() {
                     <label className="text-[#68736C]">Cooling Capacity (kW):</label>
                     <input
                       type="number"
+                      min="0"
                       value={hvacInput.coolingCapacityKw}
                       onChange={(e) =>
-                        setHvacInput({ ...hvacInput, coolingCapacityKw: parseInt(e.target.value) || 0 })
+                        setHvacInput({ ...hvacInput, coolingCapacityKw: Math.max(0, parseInt(e.target.value) || 0) })
                       }
                       className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
                     />
@@ -347,11 +558,13 @@ export default function InterventionsPage() {
                       <label className="text-[#68736C]">Base Hrs/Wk:</label>
                       <input
                         type="number"
+                        min="0"
+                        max="168"
                         value={hvacInput.baselineRuntimeHoursWeek}
                         onChange={(e) =>
                           setHvacInput({
                             ...hvacInput,
-                            baselineRuntimeHoursWeek: parseInt(e.target.value) || 0,
+                            baselineRuntimeHoursWeek: Math.min(168, Math.max(0, parseInt(e.target.value) || 0)),
                           })
                         }
                         className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
@@ -361,16 +574,32 @@ export default function InterventionsPage() {
                       <label className="text-[#68736C]">Target Hrs/Wk:</label>
                       <input
                         type="number"
+                        min="0"
+                        max="168"
                         value={hvacInput.optimizedRuntimeHoursWeek}
                         onChange={(e) =>
                           setHvacInput({
                             ...hvacInput,
-                            optimizedRuntimeHoursWeek: parseInt(e.target.value) || 0,
+                            optimizedRuntimeHoursWeek: Math.min(168, Math.max(0, parseInt(e.target.value) || 0)),
                           })
                         }
                         className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
                       />
                     </div>
+                  </div>
+                  {/* Ventilation Safeguard Confirmation */}
+                  <div className="pt-2">
+                    <label className="flex items-start gap-2 cursor-pointer text-[11px] text-[#18211C]">
+                      <input
+                        type="checkbox"
+                        checked={comfortVentilationConfirmed}
+                        onChange={(e) => setComfortVentilationConfirmed(e.target.checked)}
+                        className="w-3.5 h-3.5 mt-0.5 accent-[#245C43]"
+                      />
+                      <span className="leading-tight text-[#68736C]">
+                        Confirm ASHRAE 62.1 dormitory ventilation & thermal comfort minimums preserved
+                      </span>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -380,8 +609,13 @@ export default function InterventionsPage() {
                   <span>{hvacRes.annualKwhSavings.toLocaleString()} kWh/yr</span>
                 </div>
                 <div className="flex justify-between text-[#68736C]">
-                  <span>Cost Savings: {hvacRes.annualCostSavingsAzn.toLocaleString()} AZN/yr</span>
-                  <span>Payback: {hvacRes.simplePaybackYears.toFixed(1)} yrs</span>
+                  <span>Net Savings: {hvacRes.annualNetSavingsAzn.toLocaleString()} AZN/yr</span>
+                  <span>
+                    Payback:{" "}
+                    {hvacRes.simplePaybackYears !== null
+                      ? `${hvacRes.simplePaybackYears.toFixed(1)} yrs`
+                      : "No payback"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -391,7 +625,7 @@ export default function InterventionsPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="badge-amber text-[10px] font-semibold px-2 py-0.5 rounded">
-                    Plug Loads
+                    Plug Loads (Option A)
                   </span>
                   <input
                     type="checkbox"
@@ -408,9 +642,10 @@ export default function InterventionsPage() {
                     <label className="text-[#68736C]">Workstation Count:</label>
                     <input
                       type="number"
+                      min="0"
                       value={plugInput.workstationCount}
                       onChange={(e) =>
-                        setPlugInput({ ...plugInput, workstationCount: parseInt(e.target.value) || 0 })
+                        setPlugInput({ ...plugInput, workstationCount: Math.max(0, parseInt(e.target.value) || 0) })
                       }
                       className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
                     />
@@ -419,9 +654,14 @@ export default function InterventionsPage() {
                     <label className="text-[#68736C]">Nightly Idle Hours / Day:</label>
                     <input
                       type="number"
+                      min="0"
+                      max="24"
                       value={plugInput.idleHoursPerDay}
                       onChange={(e) =>
-                        setPlugInput({ ...plugInput, idleHoursPerDay: parseInt(e.target.value) || 0 })
+                        setPlugInput({
+                          ...plugInput,
+                          idleHoursPerDay: Math.min(24, Math.max(0, parseFloat(e.target.value) || 0)),
+                        })
                       }
                       className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
                     />
@@ -434,8 +674,13 @@ export default function InterventionsPage() {
                   <span>{plugRes.annualKwhSavings.toLocaleString()} kWh/yr</span>
                 </div>
                 <div className="flex justify-between text-[#68736C]">
-                  <span>Cost Savings: {plugRes.annualCostSavingsAzn.toLocaleString()} AZN/yr</span>
-                  <span>Payback: {plugRes.simplePaybackYears.toFixed(1)} yrs</span>
+                  <span>Net Savings: {plugRes.annualNetSavingsAzn.toLocaleString()} AZN/yr</span>
+                  <span>
+                    Payback:{" "}
+                    {plugRes.simplePaybackYears !== null
+                      ? `${plugRes.simplePaybackYears.toFixed(1)} yrs`
+                      : "No payback"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -445,7 +690,7 @@ export default function InterventionsPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="badge-green text-[10px] font-semibold px-2 py-0.5 rounded">
-                    Solar Thermal
+                    Solar Thermal (Option B)
                   </span>
                   <input
                     type="checkbox"
@@ -462,11 +707,12 @@ export default function InterventionsPage() {
                     <label className="text-[#68736C]">Daily Hot Water (Liters):</label>
                     <input
                       type="number"
+                      min="0"
                       value={thermalInput.dailyHotWaterLiters}
                       onChange={(e) =>
                         setThermalInput({
                           ...thermalInput,
-                          dailyHotWaterLiters: parseInt(e.target.value) || 0,
+                          dailyHotWaterLiters: Math.max(0, parseInt(e.target.value) || 0),
                         })
                       }
                       className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
@@ -477,13 +723,13 @@ export default function InterventionsPage() {
                     <input
                       type="number"
                       step="0.05"
-                      min="0.2"
-                      max="0.8"
+                      min="0.1"
+                      max="0.9"
                       value={thermalInput.solarThermalFraction}
                       onChange={(e) =>
                         setThermalInput({
                           ...thermalInput,
-                          solarThermalFraction: parseFloat(e.target.value) || 0.5,
+                          solarThermalFraction: Math.min(0.9, Math.max(0.1, parseFloat(e.target.value) || 0.5)),
                         })
                       }
                       className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
@@ -497,8 +743,13 @@ export default function InterventionsPage() {
                   <span>{thermalRes.annualFuelSavingsM3?.toLocaleString()} m³/yr</span>
                 </div>
                 <div className="flex justify-between text-[#68736C]">
-                  <span>Cost Savings: {thermalRes.annualCostSavingsAzn.toLocaleString()} AZN/yr</span>
-                  <span>Payback: {thermalRes.simplePaybackYears.toFixed(1)} yrs</span>
+                  <span>Net Savings: {thermalRes.annualNetSavingsAzn.toLocaleString()} AZN/yr</span>
+                  <span>
+                    Payback:{" "}
+                    {thermalRes.simplePaybackYears !== null
+                      ? `${thermalRes.simplePaybackYears.toFixed(1)} yrs`
+                      : "No payback"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -508,7 +759,7 @@ export default function InterventionsPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="badge-blue text-[10px] font-semibold px-2 py-0.5 rounded">
-                    Combustion
+                    Combustion (Option B)
                   </span>
                   <input
                     type="checkbox"
@@ -525,9 +776,10 @@ export default function InterventionsPage() {
                     <label className="text-[#68736C]">Annual Fuel Input (m³):</label>
                     <input
                       type="number"
+                      min="0"
                       value={boilerInput.annualFuelM3}
                       onChange={(e) =>
-                        setBoilerInput({ ...boilerInput, annualFuelM3: parseInt(e.target.value) || 0 })
+                        setBoilerInput({ ...boilerInput, annualFuelM3: Math.max(0, parseInt(e.target.value) || 0) })
                       }
                       className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
                     />
@@ -537,11 +789,13 @@ export default function InterventionsPage() {
                       <label className="text-[#68736C]">Base Eff (%):</label>
                       <input
                         type="number"
+                        min="50"
+                        max="95"
                         value={boilerInput.currentEfficiencyPct}
                         onChange={(e) =>
                           setBoilerInput({
                             ...boilerInput,
-                            currentEfficiencyPct: parseInt(e.target.value) || 78,
+                            currentEfficiencyPct: Math.min(95, Math.max(50, parseInt(e.target.value) || 78)),
                           })
                         }
                         className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
@@ -551,11 +805,13 @@ export default function InterventionsPage() {
                       <label className="text-[#68736C]">Tuned Eff (%):</label>
                       <input
                         type="number"
+                        min="55"
+                        max="98"
                         value={boilerInput.optimizedEfficiencyPct}
                         onChange={(e) =>
                           setBoilerInput({
                             ...boilerInput,
-                            optimizedEfficiencyPct: parseInt(e.target.value) || 88,
+                            optimizedEfficiencyPct: Math.min(98, Math.max(55, parseInt(e.target.value) || 88)),
                           })
                         }
                         className="w-full p-1.5 mt-0.5 rounded border border-[#DFE5E0] font-mono text-xs"
@@ -570,8 +826,13 @@ export default function InterventionsPage() {
                   <span>{boilerRes.annualFuelSavingsM3?.toLocaleString()} m³/yr</span>
                 </div>
                 <div className="flex justify-between text-[#68736C]">
-                  <span>Cost Savings: {boilerRes.annualCostSavingsAzn.toLocaleString()} AZN/yr</span>
-                  <span>Payback: {boilerRes.simplePaybackYears.toFixed(1)} yrs</span>
+                  <span>Net Savings: {boilerRes.annualNetSavingsAzn.toLocaleString()} AZN/yr</span>
+                  <span>
+                    Payback:{" "}
+                    {boilerRes.simplePaybackYears !== null
+                      ? `${boilerRes.simplePaybackYears.toFixed(1)} yrs`
+                      : "No payback"}
+                  </span>
                 </div>
               </div>
             </div>

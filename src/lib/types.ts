@@ -5,6 +5,28 @@ export type EvidenceClassification =
   | "ADDITIONAL_MEASUREMENT_REQUIRED"
   | "INSUFFICIENT_EVIDENCE";
 
+export type ProjectId = string;
+
+export interface BuildingMetadata {
+  id: ProjectId;
+  name: string;
+  facilityType: string;
+  location: string;
+  leadAuditor: string;
+  createdDate: string;
+  lastUpdatedDate: string;
+  isDemoProject?: boolean;
+  demoType?: "bhos_audit" | "student_residence" | "research_portfolio";
+}
+
+export interface TariffSettings {
+  electricityTariffAznPerKwh: number;
+  naturalGasTariffAznPerM3: number;
+  gridEmissionsFactorKgPerKwh: number | null; // null if unvalidated
+  gasEmissionsFactorKgPerM3: number;
+  sourceNote: string;
+}
+
 export interface DataQualitySummary {
   totalRows: number;
   missingRows: number;
@@ -47,48 +69,47 @@ export interface InterventionParams {
   notes: string;
 }
 
-export interface BaselineRegressionResult {
-  r2: number;
-  rmse: number;
-  cvRmsePct: number;
-  nmbePct: number;
-  ashraeCompliant: boolean;
-  coefficients: {
-    intercept: number;
-    hddCoeff: number;
-    cddCoeff: number;
-    occCoeff?: number;
+export interface MeasurementPlan {
+  recommendedOption: "IPMVP Option A" | "IPMVP Option B" | "IPMVP Option C";
+  optionTitle: string;
+  rationale: string;
+  meteringBoundary: string;
+  recommendedHardware: string[];
+  loggingIntervalMinutes: number;
+  minimumRecommendedDurationDays: number;
+  expectedFsuPct: number;
+  riskMitigation: string[];
+}
+
+export interface StaleFlags {
+  baselineStale: boolean;
+  interventionsStale: boolean;
+  measurementStale: boolean;
+  evidenceGateStale: boolean;
+  reportsStale: boolean;
+}
+
+export interface FullProjectState {
+  version: "2.0.0";
+  metadata: BuildingMetadata;
+  tariffs: TariffSettings;
+  staleFlags: StaleFlags;
+  rawDataset?: {
+    fileName: string;
+    rowCount: number;
+    uploadedAt: string;
   };
-  sampleSize: number;
-  predictedSeries: number[];
-  actualSeries: number[];
-  dates: string[];
+  auditSummary?: DataQualitySummary;
+  bhosAudit?: BHOSAuditResult;
+  baselineResult?: import("./baseline/regression").BaselineRegressionResult | null;
+  interventions: import("./interventions/calculators").BaseEcmResult[];
+  measurementPlan?: MeasurementPlan;
+  evidenceAssessment?: import("./evidence/evidence-gate").BuildingEvidenceAssessment | null;
+  reportingObservationsCount: number;
+  unresolvedNonRoutineEvents: boolean;
 }
 
-export interface EvidenceGateAssessment {
-  classification: EvidenceClassification;
-  apparentSavingsPct: number;
-  apparentSavingsKwh: number;
-  calibratedThresholdPct: number;
-  fsuPct: number;
-  maxAllowableFsuPct: number;
-  alpha: number;
-  confidencePct: number;
-  monitoringDurationDays: number;
-  dataQualityPassed: boolean;
-  resolution: Resolution;
-  decisionRationale: string[];
-  disclaimer: string;
-}
+export type { BaselineRegressionResult } from "./baseline/regression";
+export type { BuildingEvidenceAssessment } from "./evidence/evidence-gate";
+export type { BaseEcmResult } from "./interventions/calculators";
 
-export interface PortfolioAggregationResult {
-  buildingCount: number;
-  totalBaselineKwh: number;
-  totalApparentSavingsKwh: number;
-  portfolioSavingsPct: number;
-  individualMdePct: number;
-  theoreticalPortfolioMdePct: number;
-  empiricalPortfolioMdePct: number;
-  crossBuildingCorrelation: number;
-  pooledDetectionPowerPct: number;
-}
