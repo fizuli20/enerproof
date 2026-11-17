@@ -16,6 +16,10 @@ import {
   XCircle,
   RefreshCw,
   FileSpreadsheet,
+  ChevronDown,
+  ChevronRight,
+  Info,
+  ShieldAlert,
 } from "lucide-react";
 import Papa from "papaparse";
 
@@ -26,6 +30,7 @@ function AuditContent() {
   const [auditResult, setAuditResult] = useState<BHOSAuditResult | null>(project.bhosAudit || null);
   const [isLoading, setIsLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
+  const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
 
   const loadBhosDataset = async () => {
     setIsLoading(true);
@@ -57,7 +62,7 @@ function AuditContent() {
       setBhosData(rows);
       const audit = auditBhosPublicData(rows);
       setAuditResult(audit);
-      
+
       const summary = {
         totalRows: rows.length,
         missingRows: 0,
@@ -82,30 +87,44 @@ function AuditContent() {
   };
 
   useEffect(() => {
-    // Auto-load if demo=bhos or default
     loadBhosDataset();
   }, [searchParams]);
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col bg-[#F4F5F0]">
       <AppHeader
-        title="1. Pre-Intervention Data Quality & Provenance Audit"
+        title="Pre-Intervention Data Quality & Provenance Audit"
         subtitle="Automated screening gates for temporal independence, duplicate profiles, and emissions arithmetic."
       />
 
-      <main className="p-8 max-w-7xl w-full space-y-8">
+      <main className="p-6 sm:p-8 max-w-7xl w-full space-y-6">
+        {/* Plain-Language Contextual Callout Banner */}
+        {auditResult && !auditResult.temporalIndependencePass && (
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#FEF3C7]/60 border border-[#FDE68A] flex items-start gap-3.5">
+            <ShieldAlert className="w-5 h-5 text-[#9B641B] shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <h2 className="text-sm font-bold text-[#92400E]">
+                Attention: The 2023 and 2024 records contain identical monthly values. Confirm the source before using both years.
+              </h2>
+              <p className="text-xs text-[#92400E]/90 leading-relaxed">
+                All 36 monthly readings across campus electricity, Khatai electricity, and boiler gas in the 2024 disclosure match 2023 readings identically. This indicates a copy-forward reporting artifact rather than true operational constancy. Independent meter logs are required before using this period for baseline regression.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Action Controls Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-lg bg-white border border-[#DFE5E0] shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#E7F1EA] text-[#245C43] flex items-center justify-center">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white border border-[#DDE3DB] shadow-sm">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-[#152E27] text-[#D9FF91] flex items-center justify-center">
               <FileSearch className="w-5 h-5" />
             </div>
             <div>
-              <div className="font-bold text-sm text-[#18211C]">
+              <div className="font-bold text-sm text-[#101C18]">
                 Baku Higher Oil School (BHOS) 3-Year Public Dataset
               </div>
-              <div className="text-xs text-[#68736C]">
-                36 monthly observations (2022–2024) • Source: Institutional Sustainability Disclosures
+              <div className="text-xs text-[#5D6D63]">
+                36 monthly observations (2022–2024) &bull; Source: Institutional Sustainability Disclosures
               </div>
             </div>
           </div>
@@ -114,10 +133,10 @@ function AuditContent() {
             <button
               onClick={loadBhosDataset}
               disabled={isLoading}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#245C43] hover:bg-[#1b4733] text-white text-xs font-semibold shadow-sm transition-all"
+              className="btn-forest text-xs py-2 px-3.5 rounded-lg inline-flex items-center gap-2"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              Re-Run Audit Gates
+              <span>Re-Run Audit Gates</span>
             </button>
           </div>
         </div>
@@ -125,126 +144,135 @@ function AuditContent() {
         {/* 3 Verification Gates Display */}
         {auditResult && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Gate 1 */}
+            {/* Gate 1: Temporal Independence */}
             <div
-              className={`card-base p-6 border-l-4 ${
+              className={`card-editorial p-6 border-l-4 ${
                 auditResult.temporalIndependencePass
-                  ? "border-l-[#245C43]"
+                  ? "border-l-[#152E27]"
                   : "border-l-[#B74740]"
               }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#68736C]">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#5D6D63]">
                   Audit Gate 1
                 </span>
                 {auditResult.temporalIndependencePass ? (
-                  <span className="badge-green text-xs font-semibold px-2 py-0.5 rounded flex items-center gap-1">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#D9FF91]/20 text-[#152E27] flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Passed
                   </span>
                 ) : (
-                  <span className="badge-red text-xs font-semibold px-2 py-0.5 rounded flex items-center gap-1">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#FEE2E2] text-[#991B1B] flex items-center gap-1">
                     <XCircle className="w-3.5 h-3.5" /> Rejected
                   </span>
                 )}
               </div>
-              <h3 className="text-sm font-bold text-[#18211C] mb-2">
-                Temporal Independence & Duplication
+              <h3 className="text-sm font-bold text-[#101C18] mb-1.5">
+                Temporal Independence &amp; Duplication
               </h3>
-              <p className="text-xs text-[#68736C] leading-relaxed mb-4">
+              <p className="text-xs text-[#5D6D63] leading-relaxed mb-4">
                 Compares consecutive annual profiles across all utility series to detect copy-forward reporting artifacts.
               </p>
-              <div className="p-3 bg-[#F8F9F7] rounded border border-[#DFE5E0] text-xs font-mono">
-                <div className="text-[#B74740] font-semibold">
+              <div className="p-3 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB] text-xs font-mono">
+                <div className="text-[#B74740] font-bold">
                   Duplicate Rate: {auditResult.duplicatedPercentage}%
                 </div>
-                <div className="text-[#68736C] mt-1">
+                <div className="text-[#5D6D63] mt-1 text-[11px]">
                   {auditResult.duplicatedRecordCount} / 36 series entries duplicate 2023 readings identically.
                 </div>
               </div>
             </div>
 
-            {/* Gate 2 */}
+            {/* Gate 2: Emissions Arithmetic */}
             <div
-              className={`card-base p-6 border-l-4 ${
+              className={`card-editorial p-6 border-l-4 ${
                 auditResult.emissionsArithmeticPass
-                  ? "border-l-[#245C43]"
+                  ? "border-l-[#152E27]"
                   : "border-l-[#B74740]"
               }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#68736C]">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#5D6D63]">
                   Audit Gate 2
                 </span>
                 {auditResult.emissionsArithmeticPass ? (
-                  <span className="badge-green text-xs font-semibold px-2 py-0.5 rounded flex items-center gap-1">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#D9FF91]/20 text-[#152E27] flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Passed
                   </span>
                 ) : (
-                  <span className="badge-red text-xs font-semibold px-2 py-0.5 rounded flex items-center gap-1">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#FEE2E2] text-[#991B1B] flex items-center gap-1">
                     <XCircle className="w-3.5 h-3.5" /> Rejected
                   </span>
                 )}
               </div>
-              <h3 className="text-sm font-bold text-[#18211C] mb-2">
+              <h3 className="text-sm font-bold text-[#101C18] mb-1.5">
                 Emissions Factor Arithmetic
               </h3>
-              <p className="text-xs text-[#68736C] leading-relaxed mb-4">
+              <p className="text-xs text-[#5D6D63] leading-relaxed mb-4">
                 Validates public GHG disclosure mathematics against documented grid emission factors (0.5 kg CO₂/kWh).
               </p>
-              <div className="p-3 bg-[#F8F9F7] rounded border border-[#DFE5E0] text-xs font-mono">
-                <div className="text-[#B74740] font-semibold">
+              <div className="p-3 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB] text-xs font-mono">
+                <div className="text-[#B74740] font-bold">
                   Discrepancy: {auditResult.emissionsDiscrepancyFactor}x Error Flag
                 </div>
-                <div className="text-[#68736C] mt-1">
-                  Reported: 4,978.0 t <br />
-                  Calculated: 497.79 t (from 995,575 kWh)
+                <div className="text-[#5D6D63] mt-1 text-[11px]">
+                  Reported: 4,978.0 t &bull; Calculated: 497.79 t (from 995,575 kWh)
                 </div>
               </div>
             </div>
 
-            {/* Gate 3 */}
-            <div className="card-base p-6 border-l-4 border-l-[#A66A16]">
+            {/* Gate 3: Spatial Disaggregation */}
+            <div className="card-editorial p-6 border-l-4 border-l-[#9B641B]">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#68736C]">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#5D6D63]">
                   Audit Gate 3
                 </span>
-                <span className="badge-amber text-xs font-semibold px-2 py-0.5 rounded flex items-center gap-1">
+                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#FEF3C7] text-[#9B641B] flex items-center gap-1">
                   <AlertTriangle className="w-3.5 h-3.5" /> Submetering Required
                 </span>
               </div>
-              <h3 className="text-sm font-bold text-[#18211C] mb-2">
-                Spatial Submetering & Disaggregation
+              <h3 className="text-sm font-bold text-[#101C18] mb-1.5">
+                Spatial Submetering &amp; Disaggregation
               </h3>
-              <p className="text-xs text-[#68736C] leading-relaxed mb-4">
+              <p className="text-xs text-[#5D6D63] leading-relaxed mb-4">
                 Assesses whether individual dormitory blocks and academic wings possess dedicated interval metering.
               </p>
-              <div className="p-3 bg-[#F8F9F7] rounded border border-[#DFE5E0] text-xs font-mono">
-                <div className="text-[#A66A16] font-semibold">
+              <div className="p-3 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB] text-xs font-mono">
+                <div className="text-[#9B641B] font-bold">
                   Status: Bulk Campus Meter
                 </div>
-                <div className="text-[#68736C] mt-1">
-                  Boiler Seasonality: {auditResult.boilerSeasonalityPct}% of annual natural gas in 5 heating months.
+                <div className="text-[#5D6D63] mt-1 text-[11px]">
+                  Boiler Seasonality: {auditResult.boilerSeasonalityPct}% in 5 heating months.
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Actionable Engineering Recommendations */}
+        {/* Actionable Engineering Findings & Expandable Technical Details */}
         {auditResult && (
-          <div className="card-base p-6 space-y-4">
-            <h3 className="text-sm font-bold text-[#18211C] flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#245C43]" />
-              Automated Audit Findings & Corrective Roadmap
-            </h3>
+          <div className="card-editorial p-6 sm:p-7 bg-white space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#DDE3DB]">
+              <h3 className="text-sm font-bold text-[#101C18] flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#152E27]" />
+                Automated Audit Findings &amp; Corrective Roadmap
+              </h3>
+
+              <button
+                onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
+                className="text-xs font-semibold text-[#152E27] hover:underline flex items-center gap-1"
+              >
+                <span>{showTechnicalDetails ? "Hide Technical Details" : "Show Technical Details"}</span>
+                {showTechnicalDetails ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+              </button>
+            </div>
 
             <div className="space-y-2 text-xs">
               {auditResult.recommendations.map((rec, idx) => (
                 <div
                   key={idx}
-                  className="p-3 rounded-lg bg-[#F8F9F7] border border-[#DFE5E0] text-[#18211C] flex items-start gap-2.5"
+                  className="p-3.5 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] text-[#101C18] flex items-start gap-3"
                 >
-                  <span className="w-5 h-5 rounded-full bg-[#E7F1EA] text-[#153C2D] font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="w-5 h-5 rounded-full bg-[#152E27] text-white font-mono font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
                     {idx + 1}
                   </span>
                   <span className="leading-relaxed">{rec}</span>
@@ -252,29 +280,38 @@ function AuditContent() {
               ))}
             </div>
 
-            <div className="p-3 rounded bg-[#FEF3C7]/40 border border-[#FDE68A] text-[11px] text-[#92400E] leading-relaxed">
+            {showTechnicalDetails && (
+              <div className="pt-3 border-t border-[#DDE3DB] space-y-2 text-xs text-[#5D6D63]">
+                <div className="font-semibold text-[#101C18]">Technical Verification Parameters:</div>
+                <p>• Mathematical tolerance applied to duplicate check: &epsilon; = 1e-4 across all 12 calendar pairs.</p>
+                <p>• Grid emissions factor verification: Azerbaijani grid standard 0.50 kg CO₂/kWh applied to 995,575 kWh yields 497,787.5 kg (497.79 metric tonnes).</p>
+                <p>• Discrepancy calculation: 4,978.0 / 497.79 = 10.0002x (confirmed exact decimal scaling artifact in public sustainability filing).</p>
+              </div>
+            )}
+
+            <div className="p-3 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] text-[11px] text-[#5D6D63] leading-relaxed">
               <strong>Audit Demonstration Scope:</strong> This automated audit demonstrates detection of duplicate annual profiles and arithmetic scaling discrepancies on a public test case. It provides technical decision support and does not infer intentional administrative misconduct.
             </div>
           </div>
         )}
 
-        {/* Raw Data Table */}
-        <div className="card-base p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FileSpreadsheet className="w-4 h-4 text-[#245C43]" />
-              <h3 className="text-sm font-bold text-[#18211C]">
+        {/* Underlying Data Table */}
+        <div className="card-editorial p-6 sm:p-7 bg-white space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#DDE3DB]">
+            <div className="flex items-center gap-2.5">
+              <FileSpreadsheet className="w-4 h-4 text-[#152E27]" />
+              <h3 className="text-sm font-bold text-[#101C18]">
                 Underlying Monthly Data Records (2022–2024)
               </h3>
             </div>
-            <span className="text-xs text-[#68736C]">
+            <span className="text-xs text-[#5D6D63]">
               Showing {bhosData.length} monthly entries
             </span>
           </div>
 
-          <div className="overflow-x-auto max-h-80 overflow-y-auto border border-[#DFE5E0] rounded-lg">
+          <div className="overflow-x-auto max-h-80 overflow-y-auto border border-[#DDE3DB] rounded-xl">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#E7F1EA] text-[#153C2D] sticky top-0 font-semibold">
+              <thead className="bg-[#152E27] text-white sticky top-0 font-semibold text-[11px]">
                 <tr>
                   <th className="p-2.5">Year</th>
                   <th className="p-2.5">Month</th>
@@ -282,16 +319,16 @@ function AuditContent() {
                   <th className="p-2.5">Khatai Elec (kWh)</th>
                   <th className="p-2.5">Combined Elec (kWh)</th>
                   <th className="p-2.5">Boiler Gas (m³)</th>
-                  <th className="p-2.5">Duplicate Flag</th>
+                  <th className="p-2.5">Duplicate Warning Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DFE5E0] font-mono">
+              <tbody className="divide-y divide-[#DDE3DB] font-mono text-[11px]">
                 {bhosData.map((row, idx) => {
                   const isDup24 = row.year === 2024;
                   return (
                     <tr
                       key={idx}
-                      className={isDup24 ? "bg-[#FEE2E2]/30 text-[#991B1B]" : "hover:bg-[#F8F9F7] text-[#18211C]"}
+                      className={isDup24 ? "bg-[#FEF3C7]/40 text-[#92400E]" : "hover:bg-[#F4F5F0] text-[#101C18]"}
                     >
                       <td className="p-2.5 font-bold">{row.year}</td>
                       <td className="p-2.5">Month {row.month}</td>
@@ -301,11 +338,11 @@ function AuditContent() {
                       <td className="p-2.5">{row.boiler_gas_m3.toLocaleString()}</td>
                       <td className="p-2.5">
                         {isDup24 ? (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#FEE2E2] text-[#991B1B]">
-                            100% Match to 2023
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">
+                            Matches 2023 Identically
                           </span>
                         ) : (
-                          <span className="text-[10px] text-[#68736C]">Original Baseline</span>
+                          <span className="text-[10px] text-[#5D6D63]">Original Baseline</span>
                         )}
                       </td>
                     </tr>
@@ -324,7 +361,7 @@ export default function AuditPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex-1 p-8 flex items-center justify-center text-xs text-[#68736C]">
+        <div className="flex-1 p-8 flex items-center justify-center text-xs text-[#5D6D63]">
           Loading audit module...
         </div>
       }

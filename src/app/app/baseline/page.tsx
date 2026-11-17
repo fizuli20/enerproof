@@ -16,6 +16,8 @@ import {
   AlertTriangle,
   RefreshCw,
   Calendar,
+  Sparkles,
+  Info,
 } from "lucide-react";
 import Papa from "papaparse";
 
@@ -82,25 +84,25 @@ export default function BaselinePage() {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col bg-[#F4F5F0]">
       <AppHeader
-        title="2. Baseline Regression & Degree-Day Normalization"
-        subtitle="Multi-variable degree-day model with strict chronological TRAIN → CALIBRATE → REPORT separation."
+        title="Baseline Regression & Normalization"
+        subtitle="Chronological train-and-calibrate modeling with degree-day weather normalization."
       />
 
-      <main className="p-8 max-w-7xl w-full space-y-8">
+      <main className="p-6 sm:p-8 max-w-7xl w-full space-y-6">
         {/* Top Summary & Re-Run */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-lg bg-white border border-[#DFE5E0] shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-xl bg-white border border-[#DDE3DB] shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#E7F1EA] text-[#245C43] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-[#152E27] text-[#D9FF91] flex items-center justify-center shrink-0">
               <LineChart className="w-5 h-5" />
             </div>
             <div>
-              <div className="font-bold text-sm text-[#18211C]">
-                Student Residence Daily Baseline (181 Days • Jan–Jun 2026)
+              <div className="font-display font-bold text-sm text-[#101C18]">
+                Student Residence Daily Baseline (181 Days &bull; Jan–Jun 2026)
               </div>
-              <div className="text-xs text-[#68736C]">
-                Weather Station: Baku Absheron • Balance Point: 18.33°C (65°F) • Model: Multi-Variable OLS Degree-Day
+              <div className="text-xs text-[#5D6D63] mt-0.5">
+                Weather Station: Baku Absheron &bull; Balance Point: 18.33°C (65°F) &bull; Model: Multi-Variable OLS Degree-Day
               </div>
             </div>
           </div>
@@ -108,7 +110,7 @@ export default function BaselinePage() {
           <button
             onClick={loadBaselineData}
             disabled={isLoading}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#245C43] hover:bg-[#1b4733] text-white text-xs font-semibold shadow-sm transition-all"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#152E27] hover:bg-[#101C18] text-white text-xs font-semibold shadow-sm transition-all"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
             Re-Fit Regression
@@ -117,37 +119,37 @@ export default function BaselinePage() {
 
         {/* Chronological Architecture Callout */}
         {regressionResult && (
-          <div className="p-4 rounded-lg bg-white border border-[#DFE5E0] space-y-2">
+          <div className="card-editorial p-6 bg-white space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#245C43] flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5" />
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#152E27] flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-[#152E27]" />
                 Chronological Split Architecture
               </span>
-              <span className="text-[11px] font-mono text-[#68736C]">
+              <span className="text-xs font-mono text-[#5D6D63]">
                 Total Observations: {regressionResult.trainSampleSize + regressionResult.calibSampleSize} days
               </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div className="p-2.5 rounded bg-[#F8F9F7] border border-[#DFE5E0]">
-                <div className="font-semibold text-[#18211C]">1. In-Sample Training</div>
-                <div className="font-mono text-[#245C43] font-bold mt-0.5">
+              <div className="p-3.5 rounded-lg bg-[#F4F5F0] border border-[#DDE3DB]">
+                <div className="font-semibold text-[#101C18]">1. In-Sample Training</div>
+                <div className="font-mono text-[#152E27] font-bold text-sm mt-0.5">
                   {regressionResult.trainSampleSize} days (Jan 1 – May 25)
                 </div>
-                <div className="text-[11px] text-[#68736C] mt-0.5">Parameter estimation only</div>
+                <div className="text-[11px] text-[#5D6D63] mt-0.5">Parameter estimation only</div>
               </div>
-              <div className="p-2.5 rounded bg-[#F8F9F7] border border-[#DFE5E0]">
-                <div className="font-semibold text-[#18211C]">2. Independent Calibration</div>
-                <div className="font-mono text-[#245C43] font-bold mt-0.5">
+              <div className="p-3.5 rounded-lg bg-[#F4F5F0] border border-[#DDE3DB]">
+                <div className="font-semibold text-[#101C18]">2. Independent Calibration</div>
+                <div className="font-mono text-[#152E27] font-bold text-sm mt-0.5">
                   {regressionResult.calibSampleSize} days (May 26 – Jun 30)
                 </div>
-                <div className="text-[11px] text-[#68736C] mt-0.5">Out-of-sample noise evaluation</div>
+                <div className="text-[11px] text-[#5D6D63] mt-0.5">Out-of-sample noise evaluation</div>
               </div>
-              <div className="p-2.5 rounded bg-[#F8F9F7] border border-[#DFE5E0]">
-                <div className="font-semibold text-[#18211C]">3. Reporting Window</div>
-                <div className="font-mono text-[#18211C] font-bold mt-0.5">
+              <div className="p-3.5 rounded-lg bg-[#F4F5F0] border border-[#DDE3DB]">
+                <div className="font-semibold text-[#101C18]">3. Reporting Window</div>
+                <div className="font-mono text-[#101C18] font-bold text-sm mt-0.5">
                   Post-Intervention (Jul 1 – Dec 31)
                 </div>
-                <div className="text-[11px] text-[#68736C] mt-0.5">Counterfactual verification</div>
+                <div className="text-[11px] text-[#5D6D63] mt-0.5">Counterfactual verification</div>
               </div>
             </div>
           </div>
@@ -156,55 +158,55 @@ export default function BaselinePage() {
         {/* Statistical Metrics Cards */}
         {regressionResult && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="card-base p-4">
-              <div className="text-xs text-[#68736C]">Calibration R²</div>
-              <div className="text-2xl font-bold text-[#18211C] mt-1 font-mono">
+            <div className="card-editorial p-4 bg-white">
+              <div className="text-xs text-[#5D6D63] font-medium">Calibration R²</div>
+              <div className="text-2xl font-bold text-[#101C18] mt-1 font-mono">
                 {(regressionResult.calibrationDiagnostics?.r2 ?? regressionResult.trainingDiagnostics.r2).toFixed(3)}
               </div>
-              <div className="text-[11px] text-[#68736C] mt-1">
+              <div className="text-[11px] text-[#5D6D63] mt-1 font-mono">
                 Training R²: {regressionResult.trainingDiagnostics.r2.toFixed(3)}
               </div>
             </div>
 
-            <div className="card-base p-4">
-              <div className="text-xs text-[#68736C]">Calibration CV(RMSE)</div>
-              <div className="text-2xl font-bold text-[#245C43] mt-1 font-mono">
+            <div className="card-editorial p-4 bg-white">
+              <div className="text-xs text-[#5D6D63] font-medium">Calibration CV(RMSE)</div>
+              <div className="text-2xl font-bold text-[#152E27] mt-1 font-mono">
                 {(regressionResult.calibrationDiagnostics?.cvRmsePct ?? regressionResult.trainingDiagnostics.cvRmsePct).toFixed(1)}%
               </div>
-              <div className="text-[11px] text-[#68736C] mt-1">
-                Training CV: {regressionResult.trainingDiagnostics.cvRmsePct.toFixed(1)}% • Gate ≤ 25%
+              <div className="text-[11px] text-[#5D6D63] mt-1 font-mono">
+                Training CV: {regressionResult.trainingDiagnostics.cvRmsePct.toFixed(1)}% &bull; Gate ≤ 25%
               </div>
             </div>
 
-            <div className="card-base p-4">
-              <div className="text-xs text-[#68736C]">Residual Autocorrelation (r₁)</div>
-              <div className="text-2xl font-bold text-[#18211C] mt-1 font-mono">
+            <div className="card-editorial p-4 bg-white">
+              <div className="text-xs text-[#5D6D63] font-medium">Autocorrelation (r₁)</div>
+              <div className="text-2xl font-bold text-[#101C18] mt-1 font-mono">
                 {(regressionResult.calibrationDiagnostics?.r1Autocorr ?? 0).toFixed(3)}
               </div>
-              <div className="text-[11px] text-[#68736C] mt-1">
+              <div className="text-[11px] text-[#5D6D63] mt-1">
                 Adjusts effective sample size
               </div>
             </div>
 
-            <div className="card-base p-4">
-              <div className="text-xs text-[#68736C]">Screening Diagnostic</div>
+            <div className="card-editorial p-4 bg-white">
+              <div className="text-xs text-[#5D6D63] font-medium">Screening Diagnostic</div>
               <div
-                className={`text-xl font-bold mt-1 flex items-center gap-1.5 ${
+                className={`text-base font-bold mt-1.5 flex items-center gap-1.5 font-mono ${
                   regressionResult.screeningStatus === "MEETS_SCREENING_CRITERIA"
-                    ? "text-[#245C43]"
+                    ? "text-[#152E27]"
                     : regressionResult.screeningStatus === "BORDERLINE"
-                    ? "text-[#A66A16]"
+                    ? "text-[#9B641B]"
                     : "text-[#B74740]"
                 }`}
               >
                 {regressionResult.screeningStatus === "MEETS_SCREENING_CRITERIA" ? (
-                  <CheckCircle2 className="w-5 h-5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#152E27] shrink-0" />
                 ) : (
-                  <AlertTriangle className="w-5 h-5" />
+                  <AlertTriangle className="w-4 h-4 text-[#9B641B] shrink-0" />
                 )}
-                <span className="text-sm">{regressionResult.screeningStatus}</span>
+                <span className="text-xs truncate">{regressionResult.screeningStatus}</span>
               </div>
-              <div className="text-[11px] text-[#68736C] mt-1">
+              <div className="text-[11px] text-[#5D6D63] mt-1">
                 Transparent screening gate
               </div>
             </div>
@@ -213,17 +215,17 @@ export default function BaselinePage() {
 
         {/* Model Equation & Coefficients */}
         {regressionResult && (
-          <div className="card-base p-6 space-y-4">
+          <div className="card-editorial p-6 bg-white space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-[#18211C]">
+              <h3 className="text-sm font-bold font-display text-[#101C18]">
                 Trained Degree-Day Baseline Equation
               </h3>
-              <span className="text-xs text-[#68736C]">
+              <span className="text-xs font-mono text-[#5D6D63]">
                 N = {regressionResult.trainSampleSize} training observations
               </span>
             </div>
 
-            <div className="p-4 bg-[#F8F9F7] rounded-lg border border-[#DFE5E0] font-mono text-xs sm:text-sm text-[#18211C] text-center">
+            <div className="p-4 bg-[#F4F5F0] rounded-lg border border-[#DDE3DB] font-mono text-xs sm:text-sm text-[#101C18] text-center font-bold">
               E_pred (kWh) = {regressionResult.coefficients.intercept} +{" "}
               {regressionResult.coefficients.hddCoeff} &times; HDD +{" "}
               {regressionResult.coefficients.cddCoeff} &times; CDD
@@ -232,22 +234,22 @@ export default function BaselinePage() {
               )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-              <div className="p-3 bg-white rounded border border-[#DFE5E0]">
-                <div className="font-semibold text-[#18211C]">Heating Slope (&beta;_HDD):</div>
-                <div className="text-[#68736C] mt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div className="p-3 bg-white rounded-lg border border-[#DDE3DB]">
+                <div className="font-semibold text-[#101C18]">Heating Slope (&beta;_HDD):</div>
+                <div className="text-[#5D6D63] mt-1">
                   +{regressionResult.coefficients.hddCoeff} kWh per heating degree-day below 18.33°C.
                 </div>
               </div>
-              <div className="p-3 bg-white rounded border border-[#DFE5E0]">
-                <div className="font-semibold text-[#18211C]">Cooling Slope (&beta;_CDD):</div>
-                <div className="text-[#68736C] mt-1">
+              <div className="p-3 bg-white rounded-lg border border-[#DDE3DB]">
+                <div className="font-semibold text-[#101C18]">Cooling Slope (&beta;_CDD):</div>
+                <div className="text-[#5D6D63] mt-1">
                   +{regressionResult.coefficients.cddCoeff} kWh per cooling degree-day above 18.33°C.
                 </div>
               </div>
-              <div className="p-3 bg-white rounded border border-[#DFE5E0]">
-                <div className="font-semibold text-[#18211C]">Occupancy Slope (&beta;_occ):</div>
-                <div className="text-[#68736C] mt-1">
+              <div className="p-3 bg-white rounded-lg border border-[#DDE3DB]">
+                <div className="font-semibold text-[#101C18]">Occupancy Slope (&beta;_occ):</div>
+                <div className="text-[#5D6D63] mt-1">
                   +{regressionResult.coefficients.occCoeff ?? 0} kWh daily load per unit occupancy fraction.
                 </div>
               </div>
@@ -255,9 +257,12 @@ export default function BaselinePage() {
 
             {/* Screening Notes Callout */}
             {regressionResult.screeningNotes && regressionResult.screeningNotes.length > 0 && (
-              <div className="p-3 rounded bg-[#F8F9F7] border border-[#DFE5E0] text-xs space-y-1">
-                <span className="font-semibold text-[#18211C]">Diagnostic Screening Observations:</span>
-                <ul className="list-disc list-inside text-[#68736C] space-y-0.5">
+              <div className="p-3.5 rounded-lg bg-[#F4F5F0] border border-[#DDE3DB] text-xs space-y-1">
+                <span className="font-semibold text-[#101C18] flex items-center gap-1.5">
+                  <Info className="w-3.5 h-3.5 text-[#152E27]" />
+                  Diagnostic Screening Observations:
+                </span>
+                <ul className="list-disc list-inside text-[#5D6D63] space-y-0.5">
                   {regressionResult.screeningNotes.map((note: string, idx: number) => (
                     <li key={idx}>{note}</li>
                   ))}
@@ -268,12 +273,12 @@ export default function BaselinePage() {
         )}
 
         {/* Interactive Chart */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-[#18211C]">
+        <div className="card-editorial p-6 bg-white space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-[#DDE3DB]">
+            <h3 className="text-sm font-bold font-display text-[#101C18]">
               Measured Consumption vs Weather-Normalized Baseline
             </h3>
-            <span className="text-xs text-[#68736C]">Daily Time Series (Jan–Jun 2026)</span>
+            <span className="text-xs font-mono text-[#5D6D63]">Daily Time Series (Jan–Jun 2026)</span>
           </div>
           <TimeSeriesChart
             data={chartData}

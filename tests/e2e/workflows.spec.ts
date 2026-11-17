@@ -1,40 +1,57 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("EnerProof V2 Production E2E Workflows", () => {
+test.describe("EnerProof V3 Production E2E Workflows", () => {
   test("Workflow A: Judge 3-Minute Interactive Flow", async ({ page }) => {
     await page.goto("/judge");
     await expect(page).toHaveTitle(/EnerProof/i);
 
     // Check header & 3-minute badge
-    await expect(page.locator("h1")).toContainText("Explore EnerProof in 3 Minutes");
+    await expect(page.locator("h1")).toContainText(/EnerProof in 3 minutes/i);
 
-    // Demo B (Main Demo is active by default)
-    await expect(page.locator("text=EVIDENCE_SUPPORTS_ESTIMATE").first()).toBeVisible();
+    // Step 1: Meet the building
+    await expect(page.locator("text=Baku Student Residence Hall 1")).toBeVisible();
+    await page.click("button:has-text('Find an energy-saving opportunity')");
+    await page.waitForTimeout(300);
 
-    // Toggle Negative Refusal Scenario in Demo B
-    await page.click("button:has-text('Scenario: Valid Equipment Isolation')");
+    // Step 2: Choose Improvement
+    await expect(page.locator("text=1. LED Lighting Upgrade")).toBeVisible();
+    await page.click("button:has-text('Calculate potential impact')");
+    await page.waitForTimeout(300);
+
+    // Step 3: Potential Impact
+    await expect(page.locator("text=Annual Electricity Saved")).toBeVisible();
+    await expect(page.locator("text=Annual Cost Savings")).toBeVisible();
+    await page.click("button:has-text('Choose measurement strategy')");
+    await page.waitForTimeout(300);
+
+    // Step 4: Measurement Scenarios
+    await expect(page.locator("text=Scenario A: Valid Equipment Isolation")).toBeVisible();
+    await expect(page.locator("text=Scenario B: Incomplete / Insufficient Data")).toBeVisible();
+
+    // Toggle Scenario B: Insufficient Data
+    await page.click("button:has-text('Scenario B: Incomplete / Insufficient Data')");
+    await page.click("button:has-text('Evaluate with Evidence Gate')");
     await page.waitForTimeout(400);
+
+    // Step 5: Check Refusal Verdict
     await expect(page.locator("text=ADDITIONAL_MEASUREMENT_REQUIRED").first()).toBeVisible();
 
-    // Toggle back
-    await page.click("button:has-text('Scenario: Insufficient Data')");
+    // Go back and test Scenario A: Valid Equipment Isolation
+    await page.click("button:has-text('Back')");
+    await page.waitForTimeout(300);
+    await page.click("button:has-text('Scenario A: Valid Equipment Isolation')");
+    await page.click("button:has-text('Evaluate with Evidence Gate')");
     await page.waitForTimeout(400);
+
+    // Step 5: Check Approved Verdict
     await expect(page.locator("text=EVIDENCE_SUPPORTS_ESTIMATE").first()).toBeVisible();
+    await expect(page.locator("button:has-text('Download Report (PDF)')")).toBeVisible();
 
-    // Switch to Demo A (BHOS Public Data Audit)
-    await page.click("button:has-text('Demo A: Real Azerbaijani Energy Data Audit')");
+    // Step 6: Explore Evidence
+    await page.click("button:has-text('Explore the evidence behind EnerProof')");
     await page.waitForTimeout(400);
-    await expect(page.getByText(/10x Arithmetic Error/i).first()).toBeVisible();
-    await expect(page.getByText(/100% Identical Duplicate/i).first()).toBeVisible();
-
-    // Switch to Demo C (Scientific Research)
-    await page.click("button:has-text('Demo C: Scientific Research & Portfolio Noise Floor')");
-    await page.waitForTimeout(400);
-    await expect(page.getByText(/Building Data Genome 2/i).first()).toBeVisible();
-
-    // Switch back to Demo B for screenshot
-    await page.click("button:has-text('Demo B: Practical Clean Energy Retrofit')");
-    await page.waitForTimeout(500);
+    await expect(page.locator("text=Baku Higher Oil School Public Audit")).toBeVisible();
+    await expect(page.locator("text=152-Building Empirical Benchmark")).toBeVisible();
 
     await page.screenshot({
       path: "public/screenshots/01_judge_experience.png",

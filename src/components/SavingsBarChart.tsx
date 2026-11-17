@@ -25,47 +25,47 @@ export function SavingsBarChart({ interventions }: SavingsBarChartProps) {
   const maxKwh = Math.max(...interventions.map((i) => i.annualKwhSavings), 1);
 
   return (
-    <div className="w-full bg-[#FFFFFF] border border-[#DFE5E0] rounded-lg p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#DFE5E0]">
+    <div className="w-full card-editorial p-6 bg-white space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#DDE3DB] gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-[#18211C]">Annual Savings by Energy Conservation Measure</h3>
-          <p className="text-xs text-[#68736C]">Electricity & Gas Equivalent Savings (kWh/yr)</p>
+          <h3 className="text-sm font-bold text-[#101C18]">Annual Savings by Energy Conservation Measure</h3>
+          <p className="text-xs text-[#5D6D63]">Electricity &amp; Gas Equivalent Savings (kWh/yr)</p>
         </div>
+        <span className="text-xs font-mono text-[#5D6D63]">Relative impact comparison</span>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 pt-1">
         {interventions.map((ecm) => {
-          const pct = Math.round((ecm.annualKwhSavings / maxKwh) * 100);
+          const pct = Math.max(4, Math.round((ecm.annualKwhSavings / maxKwh) * 100));
           const costSavings = ecm.annualGrossSavingsAzn ?? ecm.annualCostSavingsAzn ?? 0;
           const capEx = ecm.implementationCostAzn ?? ecm.capitalCostAzn ?? 0;
 
           return (
             <div key={ecm.id} className="space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-medium text-[#18211C]">{ecm.name}</span>
-                <span className="font-mono font-semibold text-[#245C43]">
+                <span className="font-semibold text-[#101C18]">{ecm.name}</span>
+                <span className="font-mono font-bold text-[#152E27]">
                   {ecm.annualKwhSavings.toLocaleString()} kWh/yr ({costSavings.toLocaleString()} AZN)
                 </span>
               </div>
-              <div className="w-full bg-[#F8F9F7] h-3 rounded-full overflow-hidden border border-[#DFE5E0]">
+
+              {/* Progress Bar with Lime Accent */}
+              <div className="w-full bg-[#F4F5F0] h-2.5 rounded-full overflow-hidden border border-[#DDE3DB]">
                 <div
-                  className="bg-[#245C43] h-full rounded-full transition-all duration-500"
+                  className="bg-[#152E27] h-full rounded-full transition-all duration-500 relative"
                   style={{ width: `${pct}%` }}
-                ></div>
+                >
+                  <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-[#D9FF91] rounded-r-full" />
+                </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-[#68736C]">
+
+              <div className="flex items-center justify-between text-[11px] text-[#5D6D63] font-mono">
                 <span>CapEx: {capEx.toLocaleString()} AZN</span>
                 <span>
                   Simple Payback:{" "}
                   {ecm.simplePaybackYears !== null && ecm.simplePaybackYears !== undefined
                     ? `${ecm.simplePaybackYears.toFixed(1)} yrs`
                     : "No positive payback"}
-                </span>
-                <span>
-                  Avoided CO₂:{" "}
-                  {ecm.avoidedCo2TonnesYear !== null && ecm.avoidedCo2TonnesYear !== undefined
-                    ? `${ecm.avoidedCo2TonnesYear.toFixed(1)} t/yr`
-                    : "Unvalidated"}
                 </span>
               </div>
             </div>

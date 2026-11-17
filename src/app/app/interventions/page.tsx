@@ -239,34 +239,34 @@ export default function InterventionsPage() {
       : null;
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col bg-[#F4F5F0]">
       <AppHeader
         title="3. Energy Conservation Measures (ECMs) & Financials"
         subtitle="Physically bounded engineering calculators with full lifecycle accounting and localized Azerbaijan tariffs."
       />
 
-      <main className="p-8 max-w-7xl w-full space-y-8">
+      <main className="p-6 sm:p-8 max-w-7xl w-full space-y-8">
         {/* Global Tariff Customization Box */}
-        <div className="card-base p-5 bg-white space-y-3">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#DFE5E0]">
+        <div className="card-editorial p-6 bg-white space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#DDE3DB]">
             <div>
-              <h3 className="text-sm font-bold text-[#18211C] flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-[#245C43]" />
+              <h3 className="text-sm font-bold text-[#101C18] flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-[#152E27]" />
                 Utility Tariffs & Sensitivity Scenario (Azerbaijan)
               </h3>
-              <p className="text-xs text-[#68736C]">
+              <p className="text-xs text-[#5D6D63]">
                 Subsidized non-residential rate assumption: 0.125 AZN/kWh electricity, 0.25 AZN/m³ gas.
               </p>
             </div>
             <div className="flex items-center gap-3">
               {/* Scenario Toggle */}
-              <div className="inline-flex rounded-lg border border-[#DFE5E0] p-0.5 bg-[#F8F9F7] text-xs font-semibold">
+              <div className="inline-flex rounded-lg border border-[#DDE3DB] p-0.5 bg-[#F4F5F0] text-xs font-semibold">
                 <button
                   onClick={() => setScenario("conservative")}
                   className={`px-2.5 py-1 rounded-md transition-all ${
                     scenario === "conservative"
                       ? "bg-white text-[#B74740] shadow-sm font-bold"
-                      : "text-[#68736C] hover:text-[#18211C]"
+                      : "text-[#5D6D63] hover:text-[#101C18]"
                   }`}
                 >
                   Conservative (-15%)
@@ -275,8 +275,8 @@ export default function InterventionsPage() {
                   onClick={() => setScenario("base")}
                   className={`px-2.5 py-1 rounded-md transition-all ${
                     scenario === "base"
-                      ? "bg-white text-[#245C43] shadow-sm font-bold"
-                      : "text-[#68736C] hover:text-[#18211C]"
+                      ? "bg-[#152E27] text-white shadow-sm font-bold"
+                      : "text-[#5D6D63] hover:text-[#101C18]"
                   }`}
                 >
                   Base Case
@@ -285,8 +285,8 @@ export default function InterventionsPage() {
                   onClick={() => setScenario("optimistic")}
                   className={`px-2.5 py-1 rounded-md transition-all ${
                     scenario === "optimistic"
-                      ? "bg-white text-[#245C43] shadow-sm font-bold"
-                      : "text-[#68736C] hover:text-[#18211C]"
+                      ? "bg-white text-[#152E27] shadow-sm font-bold"
+                      : "text-[#5D6D63] hover:text-[#101C18]"
                   }`}
                 >
                   Optimistic (+15%)
@@ -295,7 +295,7 @@ export default function InterventionsPage() {
 
               <button
                 onClick={() => handleTariffChange(DEFAULT_AZN_TARIFF_PER_KWH, DEFAULT_AZN_TARIFF_PER_M3_GAS)}
-                className="inline-flex items-center gap-1.5 text-xs text-[#68736C] hover:text-[#18211C]"
+                className="inline-flex items-center gap-1.5 text-xs text-[#5D6D63] hover:text-[#101C18]"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Reset Defaults
@@ -348,54 +348,54 @@ export default function InterventionsPage() {
 
         {/* Lifecycle Portfolio Summary Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-          <div className="card-base p-4">
-            <div className="text-xs text-[#68736C]">Total Initial Investment</div>
-            <div className="text-xl font-bold text-[#18211C] mt-1 font-mono">
+          <div className="card-editorial p-4 bg-white">
+            <div className="text-xs text-[#5D6D63]">Total Initial Investment</div>
+            <div className="text-xl font-bold text-[#101C18] mt-1 font-mono">
               {totalInvestmentAzn.toLocaleString()} AZN
             </div>
-            <div className="text-[11px] text-[#68736C] mt-1">
+            <div className="text-[11px] text-[#5D6D63] mt-1">
               CapEx: {totalCapEx.toLocaleString()} • M&V: {totalMAndVCost.toLocaleString()}
             </div>
           </div>
 
-          <div className="card-base p-4">
-            <div className="text-xs text-[#68736C]">Gross Utility Savings</div>
-            <div className="text-xl font-bold text-[#245C43] mt-1 font-mono">
+          <div className="card-editorial p-4 bg-white">
+            <div className="text-xs text-[#5D6D63]">Gross Utility Savings</div>
+            <div className="text-xl font-bold text-[#152E27] mt-1 font-mono">
               {totalGrossSavingsAzn.toLocaleString()} AZN/yr
             </div>
-            <div className="text-[11px] text-[#245C43] mt-1">
+            <div className="text-[11px] text-[#152E27] mt-1 font-semibold">
               {totalKwh.toLocaleString()} kWh/yr total
             </div>
           </div>
 
-          <div className="card-base p-4">
-            <div className="text-xs text-[#68736C]">Annual Recurring O&M</div>
+          <div className="card-editorial p-4 bg-white">
+            <div className="text-xs text-[#5D6D63]">Annual Recurring O&M</div>
             <div className="text-xl font-bold text-[#B74740] mt-1 font-mono">
               -{totalRecurringCostAzn.toLocaleString()} AZN/yr
             </div>
-            <div className="text-[11px] text-[#68736C] mt-1">Maintenance & telemetry</div>
+            <div className="text-[11px] text-[#5D6D63] mt-1">Maintenance & telemetry</div>
           </div>
 
-          <div className="card-base p-4">
-            <div className="text-xs text-[#68736C]">Net Annual Cash Flow</div>
+          <div className="card-editorial p-4 bg-white">
+            <div className="text-xs text-[#5D6D63]">Net Annual Cash Flow</div>
             <div
               className={`text-xl font-bold mt-1 font-mono ${
-                totalNetSavingsAzn > 0 ? "text-[#245C43]" : "text-[#B74740]"
+                totalNetSavingsAzn > 0 ? "text-[#152E27]" : "text-[#B74740]"
               }`}
             >
               {totalNetSavingsAzn.toLocaleString()} AZN/yr
             </div>
-            <div className="text-[11px] text-[#68736C] mt-1">
+            <div className="text-[11px] text-[#5D6D63] mt-1">
               Gross savings minus recurring
             </div>
           </div>
 
-          <div className="card-base p-4 col-span-2 sm:col-span-1">
-            <div className="text-xs text-[#68736C]">Simple Payback Period</div>
-            <div className="text-xl font-bold text-[#18211C] mt-1 font-mono">
+          <div className="card-editorial p-4 bg-white col-span-2 sm:col-span-1">
+            <div className="text-xs text-[#5D6D63]">Simple Payback Period</div>
+            <div className="text-xl font-bold text-[#101C18] mt-1 font-mono">
               {combinedPaybackYears !== null ? `${combinedPaybackYears.toFixed(1)} years` : "No positive payback"}
             </div>
-            <div className="text-[11px] text-[#68736C] mt-1">
+            <div className="text-[11px] text-[#5D6D63] mt-1">
               {combinedPaybackYears !== null ? "Total investment / net annual" : "Net annual savings ≤ 0"}
             </div>
           </div>

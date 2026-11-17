@@ -1,14 +1,26 @@
 "use client";
 
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShieldCheck, ArrowRight, BarChart3, BookOpen, Layers, Info, Sparkles } from "lucide-react";
+import { EnerProofLogo } from "./EnerProofLogo";
+import {
+  Sparkles,
+  BarChart3,
+  Layers,
+  BookOpen,
+  Info,
+  ArrowRight,
+  Menu,
+  X,
+} from "lucide-react";
 
 export function Navbar() {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: "/judge", label: "Judge (3 Min)", icon: Sparkles },
+    { href: "/judge", label: "Judge (3 Min)", icon: Sparkles, highlight: true },
     { href: "/demo", label: "Live Demos", icon: Layers },
     { href: "/research", label: "Research", icon: BarChart3 },
     { href: "/methodology", label: "Methodology", icon: BookOpen },
@@ -16,21 +28,77 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FFFFFF]/90 backdrop-blur-md border-b border-[#DFE5E0]">
+    <header className="sticky top-0 z-50 bg-[#F4F5F0]/90 backdrop-blur-md border-b border-[#DDE3DB]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-[#245C43] flex items-center justify-center text-white shadow-sm">
-            <ShieldCheck className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <span className="font-bold text-lg text-[#18211C] tracking-tight">EnerProof</span>
-            <span className="hidden sm:inline-block ml-2 text-xs font-medium px-2 py-0.5 rounded-full bg-[#E7F1EA] text-[#153C2D]">
-              CECECO 2027
-            </span>
-          </div>
+        {/* Brand Logo */}
+        <Link href="/" className="flex items-center gap-2 group">
+          <EnerProofLogo variant="dark" size="md" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-1.5">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+
+            if (link.highlight) {
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                    isActive
+                      ? "bg-[#152E27] text-[#D9FF91] shadow-sm"
+                      : "bg-[#152E27]/5 hover:bg-[#152E27]/10 text-[#152E27] border border-[#152E27]/10"
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#152E27]" />
+                  <span>{link.label}</span>
+                </Link>
+              );
+            }
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-[#152E27]/10 text-[#101C18] font-semibold"
+                    : "text-[#5D6D63] hover:text-[#101C18] hover:bg-black/5"
+                }`}
+              >
+                <Icon className="w-4 h-4 text-[#5D6D63]" />
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* CTA Button & Mobile Toggle */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/app"
+            className="hidden sm:inline-flex items-center gap-1.5 btn-forest text-xs py-2 px-3.5 rounded-lg font-medium shadow-sm transition-all"
+          >
+            <span>Launch Platform</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-lg text-[#101C18] hover:bg-black/5"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-b border-[#DDE3DB] bg-[#F4F5F0] px-4 pt-2 pb-4 space-y-2">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname.startsWith(link.href);
@@ -38,10 +106,11 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium ${
                   isActive
-                    ? "bg-[#E7F1EA] text-[#153C2D]"
-                    : "text-[#68736C] hover:text-[#18211C] hover:bg-black/5"
+                    ? "bg-[#152E27] text-white"
+                    : "text-[#101C18] hover:bg-black/5"
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -49,18 +118,18 @@ export function Navbar() {
               </Link>
             );
           })}
-        </nav>
-
-        <div className="flex items-center gap-3">
-          <Link
-            href="/app"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#245C43] hover:bg-[#1b4733] text-white text-sm font-medium shadow-sm transition-all"
-          >
-            Launch Platform
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="pt-2 border-t border-[#DDE3DB]">
+            <Link
+              href="/app"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-center gap-2 w-full btn-forest text-sm py-2.5 rounded-lg"
+            >
+              Launch Platform
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
     </header>
   );
 }

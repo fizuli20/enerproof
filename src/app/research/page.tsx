@@ -1,8 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PowerCurveChart } from "@/components/PowerCurveChart";
-import { CheckCircle2, AlertTriangle, ShieldCheck, BarChart3, Layers, Database } from "lucide-react";
-import Image from "next/image";
+import { CheckCircle2, AlertTriangle, ShieldCheck, BarChart3, Layers, Database, Sparkles } from "lucide-react";
 
 export default function ResearchPage() {
   const figures = [
@@ -19,33 +18,33 @@ export default function ResearchPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8F9F7]">
+    <div className="min-h-screen flex flex-col bg-[#F4F5F0]">
       <Navbar />
 
       <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12">
         {/* Header */}
         <div className="max-w-4xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E7F1EA] text-xs font-semibold text-[#153C2D]">
-            <Database className="w-3.5 h-3.5 text-[#245C43]" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#152E27] text-[#D9FF91] text-xs font-semibold">
+            <Database className="w-3.5 h-3.5" />
             Scientific Methodology & Empirical Benchmark
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-[#18211C] tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-extrabold font-display text-[#101C18] tracking-tight">
             EnerProof Scientific Research Dossier
           </h1>
-          <p className="text-base text-[#68736C] leading-relaxed">
+          <p className="text-base text-[#5D6D63] leading-relaxed">
             Independent reproducibility audit, statistical power modeling, and empirical calibration across 152 buildings from the Building Data Genome 2 (BDG2) dataset. Conducted for the CECECO Clean Energy Hackathon 2027.
           </p>
         </div>
 
         {/* 1. Scientific Governance & Provenance */}
-        <section className="card-base p-6 sm:p-8 space-y-6">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#245C43]">
+        <section className="card-editorial p-6 sm:p-8 bg-white space-y-6">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#152E27]">
             <ShieldCheck className="w-4 h-4" />
             1. Data Provenance & Pre-Test Cohort Selection
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs text-[#68736C] leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs text-[#5D6D63] leading-relaxed">
             <div className="space-y-3">
-              <h3 className="text-base font-bold text-[#18211C]">The BDG2 Benchmark Cohort</h3>
+              <h3 className="text-base font-bold font-display text-[#101C18]">The BDG2 Benchmark Cohort</h3>
               <p>
                 To avoid self-serving synthetic assumptions, the EnerProof verification engine was tested against the peer-reviewed Building Data Genome 2 (BDG2) dataset (Miller et al., <em>Nature Scientific Data</em>, 2020), consisting of whole-building interval electricity meters and on-site weather records from university campuses.
               </p>
@@ -57,32 +56,32 @@ export default function ResearchPage() {
               </p>
             </div>
 
-            <div className="space-y-3 bg-[#F8F9F7] p-5 rounded-lg border border-[#DFE5E0]">
-              <h4 className="text-sm font-bold text-[#18211C]">Authoritative Benchmark Metrics</h4>
+            <div className="space-y-3 bg-[#F4F5F0] p-5 rounded-xl border border-[#DDE3DB]">
+              <h4 className="text-sm font-bold font-display text-[#101C18]">Authoritative Benchmark Metrics</h4>
               <ul className="space-y-2 text-xs">
-                <li className="flex justify-between border-b border-[#DFE5E0] pb-1">
+                <li className="flex justify-between border-b border-[#DDE3DB] pb-1">
                   <span>Initial Screened Cohort:</span>
-                  <span className="font-mono font-semibold text-[#18211C]">152 buildings (82 lodging, 70 education)</span>
+                  <span className="font-mono font-semibold text-[#101C18]">152 buildings (82 lodging, 70 education)</span>
                 </li>
-                <li className="flex justify-between border-b border-[#DFE5E0] pb-1">
+                <li className="flex justify-between border-b border-[#DDE3DB] pb-1">
                   <span>Test-Period Dropouts (Abstentions):</span>
                   <span className="font-mono font-semibold text-[#B74740]">9 buildings (recorded as abstentions)</span>
                 </li>
-                <li className="flex justify-between border-b border-[#DFE5E0] pb-1">
+                <li className="flex justify-between border-b border-[#DDE3DB] pb-1">
                   <span>Completed Evaluation Sample:</span>
-                  <span className="font-mono font-semibold text-[#245C43]">143 buildings</span>
+                  <span className="font-mono font-semibold text-[#152E27]">143 buildings</span>
                 </li>
-                <li className="flex justify-between border-b border-[#DFE5E0] pb-1">
+                <li className="flex justify-between border-b border-[#DDE3DB] pb-1">
                   <span>Simulation Granularity:</span>
-                  <span className="font-mono font-semibold text-[#18211C]">Hourly-first with exact sum aggregation</span>
+                  <span className="font-mono font-semibold text-[#101C18]">Hourly-first with exact sum aggregation</span>
                 </li>
-                <li className="flex justify-between border-b border-[#DFE5E0] pb-1">
-                  <span>Target False-Alarm Ceiling (α):</span>
-                  <span className="font-mono font-semibold text-[#18211C]">5.0% (95% nominal confidence)</span>
+                <li className="flex justify-between border-b border-[#DDE3DB] pb-1">
+                  <span>Target False-Alarm Ceiling (&alpha;):</span>
+                  <span className="font-mono font-semibold text-[#101C18]">5.0% (95% nominal confidence)</span>
                 </li>
                 <li className="flex justify-between">
                   <span>Target Statistical Power:</span>
-                  <span className="font-mono font-semibold text-[#18211C]">80.0% (ASHRAE Guideline 14 Annex B)</span>
+                  <span className="font-mono font-semibold text-[#101C18]">80.0% (ASHRAE Guideline 14 Annex B)</span>
                 </li>
               </ul>
             </div>
@@ -90,22 +89,22 @@ export default function ResearchPage() {
         </section>
 
         {/* 2. Authoritative Resolution Comparison Table */}
-        <section className="card-base p-6 sm:p-8 space-y-6">
+        <section className="card-editorial p-6 sm:p-8 bg-white space-y-6">
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-[#245C43] mb-1">
+            <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#152E27] mb-1">
               2. Empirical Evidence Gate Benchmarks
             </div>
-            <h2 className="text-2xl font-bold text-[#18211C]">
+            <h2 className="text-2xl font-bold font-display text-[#101C18]">
               Authoritative Resolution Comparison & Quality Gate Results
             </h2>
-            <p className="mt-1 text-xs text-[#68736C]">
+            <p className="mt-1 text-xs text-[#5D6D63]">
               Derived from 152 buildings, 50 repeated synthetic null draws with centered residuals, and matched 6-month evaluation windows.
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border border-[#DFE5E0] rounded-lg overflow-hidden">
-              <thead className="bg-[#E7F1EA] text-[#153C2D] font-bold">
+            <table className="w-full text-left text-xs border border-[#DDE3DB] rounded-lg overflow-hidden">
+              <thead className="bg-[#F4F5F0] text-[#101C18] font-bold border-b border-[#DDE3DB]">
                 <tr>
                   <th className="p-3">Resolution Tier</th>
                   <th className="p-3">Primary Baseline Model</th>
@@ -116,47 +115,47 @@ export default function ResearchPage() {
                   <th className="p-3">Quality Gate Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#DFE5E0] bg-white">
-                <tr className="hover:bg-[#F8F9F7]">
-                  <td className="p-3 font-semibold text-[#18211C]">Hourly Interval</td>
-                  <td className="p-3">Ridge weather regression</td>
-                  <td className="p-3 font-mono font-bold">8.37%</td>
-                  <td className="p-3 font-mono text-[#B74740]">6.98%</td>
-                  <td className="p-3 font-mono text-[#B74740]">28.67%</td>
-                  <td className="p-3 font-mono text-[#B74740]">UNESTABLISHED (FPR &gt; 5%)</td>
-                  <td className="p-3">
-                    <span className="badge-red px-2 py-0.5 rounded text-[10px] font-bold">FAIL_BOTH_CONTROLS</span>
+              <tbody className="divide-y divide-[#DDE3DB] bg-white font-mono">
+                <tr className="hover:bg-[#F4F5F0]/50">
+                  <td className="p-3 font-sans font-semibold text-[#101C18]">Hourly Interval</td>
+                  <td className="p-3 font-sans">Ridge weather regression</td>
+                  <td className="p-3 font-bold">8.37%</td>
+                  <td className="p-3 text-[#B74740]">6.98%</td>
+                  <td className="p-3 text-[#B74740]">28.67%</td>
+                  <td className="p-3 text-[#B74740]">UNESTABLISHED (FPR &gt; 5%)</td>
+                  <td className="p-3 font-sans">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEE2E2] text-[#991B1B]">FAIL_BOTH_CONTROLS</span>
                   </td>
                 </tr>
-                <tr className="hover:bg-[#F8F9F7] bg-[#E7F1EA]/10">
-                  <td className="p-3 font-semibold text-[#18211C]">Daily Interval</td>
-                  <td className="p-3">Ridge weather regression</td>
-                  <td className="p-3 font-mono font-bold text-[#245C43]">11.80%</td>
-                  <td className="p-3 font-mono text-[#245C43] font-bold">4.21% (≤ 5%)</td>
-                  <td className="p-3 font-mono text-[#B74740]">22.38%</td>
-                  <td className="p-3 font-mono text-[#245C43] font-bold">15.0%</td>
-                  <td className="p-3">
-                    <span className="badge-green px-2 py-0.5 rounded text-[10px] font-bold">PASS_SYNTH_CONTROL</span>
+                <tr className="hover:bg-[#F4F5F0]/50 bg-[#152E27]/5">
+                  <td className="p-3 font-sans font-semibold text-[#101C18]">Daily Interval</td>
+                  <td className="p-3 font-sans">Ridge weather regression</td>
+                  <td className="p-3 font-bold text-[#152E27]">11.80%</td>
+                  <td className="p-3 text-[#152E27] font-bold">4.21% (&le; 5%)</td>
+                  <td className="p-3 text-[#B74740]">22.38%</td>
+                  <td className="p-3 text-[#152E27] font-bold">15.0%</td>
+                  <td className="p-3 font-sans">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#152E27] text-[#D9FF91]">PASS_SYNTH_CONTROL</span>
                   </td>
                 </tr>
-                <tr className="hover:bg-[#F8F9F7]">
-                  <td className="p-3 font-semibold text-[#18211C]">Monthly Utility Bill</td>
-                  <td className="p-3">Ridge weather regression</td>
-                  <td className="p-3 font-mono font-bold">13.64%</td>
-                  <td className="p-3 font-mono text-[#B74740]">6.81%</td>
-                  <td className="p-3 font-mono text-[#B74740]">18.18%</td>
-                  <td className="p-3 font-mono text-[#B74740]">UNESTABLISHED (FPR &gt; 5%)</td>
-                  <td className="p-3">
-                    <span className="badge-red px-2 py-0.5 rounded text-[10px] font-bold">FAIL_BOTH_CONTROLS</span>
+                <tr className="hover:bg-[#F4F5F0]/50">
+                  <td className="p-3 font-sans font-semibold text-[#101C18]">Monthly Utility Bill</td>
+                  <td className="p-3 font-sans">Ridge weather regression</td>
+                  <td className="p-3 font-bold">13.64%</td>
+                  <td className="p-3 text-[#B74740]">6.81%</td>
+                  <td className="p-3 text-[#B74740]">18.18%</td>
+                  <td className="p-3 text-[#B74740]">UNESTABLISHED (FPR &gt; 5%)</td>
+                  <td className="p-3 font-sans">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEE2E2] text-[#991B1B]">FAIL_BOTH_CONTROLS</span>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div className="p-4 rounded-lg bg-[#FEF3C7]/40 border border-[#FDE68A] text-xs text-[#92400E] space-y-1">
+          <div className="p-4 rounded-xl bg-[#FEF3C7] border border-[#FDE68A] text-xs text-[#92400E] space-y-1">
             <div className="font-bold">Crucial Scientific Finding on Historical Placebos:</div>
-            <p>
+            <p className="leading-relaxed">
               Historical placebo windows (pre-intervention periods tested as if interventions occurred) exhibited high false-alarm rates (18.2% to 28.7%) across all resolutions. This proves that real commercial and educational buildings undergo continuous operational drift, academic schedule changes, and unrecorded equipment swaps. A real-world placebo window cannot be treated as a confirmed stationary null control.
             </p>
           </div>
@@ -165,10 +164,10 @@ export default function ResearchPage() {
         {/* 3. Interactive Power Curves */}
         <section className="space-y-6">
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-[#245C43] mb-1">
+            <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#152E27] mb-1">
               3. Statistical Detection Power
             </div>
-            <h2 className="text-2xl font-bold text-[#18211C]">
+            <h2 className="text-2xl font-bold font-display text-[#101C18]">
               Empirical Detection Power & Portfolio Pooling
             </h2>
           </div>
@@ -180,39 +179,39 @@ export default function ResearchPage() {
         </section>
 
         {/* 4. Negative Results & Corrected Claims */}
-        <section className="card-base p-6 sm:p-8 space-y-6">
-          <div className="text-xs font-bold uppercase tracking-wider text-[#B74740]">
+        <section className="card-editorial p-6 sm:p-8 bg-white space-y-6">
+          <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#B74740]">
             4. Negative Results & Corrected Assumptions
           </div>
-          <h2 className="text-2xl font-bold text-[#18211C]">
+          <h2 className="text-2xl font-bold font-display text-[#101C18]">
             What Didn't Work: Scientific Corrections
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#68736C]">
-            <div className="p-4 rounded-lg bg-[#F8F9F7] border border-[#DFE5E0] space-y-2">
-              <div className="font-bold text-[#B74740]">Correction 1: Single-Building 5% MDE is Unsupported</div>
-              <p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#5D6D63]">
+            <div className="p-4 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] space-y-2">
+              <div className="font-bold font-display text-[#B74740]">Correction 1: Single-Building 5% MDE is Unsupported</div>
+              <p className="leading-relaxed">
                 In our initial exploratory runs, single buildings were hypothesized to detect 5% savings at 80% power. Rigorous repeated simulation demonstrated that empirical power for a 5% saving in single buildings is only <strong>24.7% (daily)</strong> and <strong>23.8% (hourly)</strong>. Claiming 80% power at 5% savings for unpooled buildings is scientifically unsupported.
               </p>
             </div>
 
-            <div className="p-4 rounded-lg bg-[#F8F9F7] border border-[#DFE5E0] space-y-2">
-              <div className="font-bold text-[#B74740]">Correction 2: Monthly Utility Bills Cannot Prove Minor Savings</div>
-              <p>
+            <div className="p-4 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] space-y-2">
+              <div className="font-bold font-display text-[#B74740]">Correction 2: Monthly Utility Bills Cannot Prove Minor Savings</div>
+              <p className="leading-relaxed">
                 Monthly utility bills provide only 12 degrees of freedom annually. Under BDG2 evaluation, a 3% saving was detected in only <strong>17.4%</strong> of monthly test windows. Verifying minor operational or behavioral savings (&lt; 8–10%) requires interval telemetry or dedicated submetering.
               </p>
             </div>
 
-            <div className="p-4 rounded-lg bg-[#F8F9F7] border border-[#DFE5E0] space-y-2">
-              <div className="font-bold text-[#B74740]">Correction 3: Cross-Building Residual Correlation (ρ = 0.33)</div>
-              <p>
-                Naive ESCO portfolio models assume building residual errors are mutually independent, predicting noise diminishes as 1/√K. In reality, same-campus buildings share weather microclimates, academic calendars, and grid dynamics, creating an intra-site residual correlation of <strong>ρ ≈ 0.33</strong>. The portfolio noise floor asymptotes to σ√ρ, not zero.
+            <div className="p-4 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] space-y-2">
+              <div className="font-bold font-display text-[#B74740]">Correction 3: Cross-Building Residual Correlation (&rho; = 0.33)</div>
+              <p className="leading-relaxed">
+                Naive ESCO portfolio models assume building residual errors are mutually independent, predicting noise diminishes as 1/&radic;K. In reality, same-campus buildings share weather microclimates, academic calendars, and grid dynamics, creating an intra-site residual correlation of <strong>&rho; &asymp; 0.33</strong>. The portfolio noise floor asymptotes to &sigma;&radic;&rho;, not zero.
               </p>
             </div>
 
-            <div className="p-4 rounded-lg bg-[#F8F9F7] border border-[#DFE5E0] space-y-2">
-              <div className="font-bold text-[#B74740]">Correction 4: Dormitory Behavioral Nudges Yield &lt; 1.5%</div>
-              <p>
+            <div className="p-4 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] space-y-2">
+              <div className="font-bold font-display text-[#B74740]">Correction 4: Dormitory Behavioral Nudges Yield &lt; 1.5%</div>
+              <p className="leading-relaxed">
                 While competition proposals often claim 8–10% savings from student awareness campaigns and posters, physical empirical literature confirms that purely behavioral nudges consistently deliver only <strong>1.1% to 1.5%</strong> persistent savings. Achieving &gt; 5% requires physical hardware controls (LEDs, HVAC setbacks, boiler tuning).
               </p>
             </div>
@@ -222,22 +221,22 @@ export default function ResearchPage() {
         {/* 5. Complete Research Figures Gallery */}
         <section className="space-y-6">
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-[#245C43] mb-1">
+            <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#152E27] mb-1">
               5. Empirical Research Figures (10 Figures)
             </div>
-            <h2 className="text-2xl font-bold text-[#18211C]">
+            <h2 className="text-2xl font-bold font-display text-[#101C18]">
               Generated Research Figures & Evidence
             </h2>
-            <p className="mt-1 text-xs text-[#68736C]">
+            <p className="mt-1 text-xs text-[#5D6D63]">
               Generated by the audited Experiment 2 Python pipeline (`enerproof-research/outputs/figures`).
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {figures.map((fig) => (
-              <div key={fig.id} className="card-base p-4 space-y-3 shadow-sm">
-                <div className="font-semibold text-xs text-[#18211C]">{fig.title}</div>
-                <div className="relative w-full aspect-[16/10] bg-[#F8F9F7] rounded overflow-hidden border border-[#DFE5E0]">
+              <div key={fig.id} className="card-editorial p-4 bg-white space-y-3 shadow-sm">
+                <div className="font-semibold text-xs text-[#101C18]">{fig.title}</div>
+                <div className="relative w-full aspect-[16/10] bg-[#F4F5F0] rounded-lg overflow-hidden border border-[#DDE3DB]">
                   <img
                     src={fig.file}
                     alt={fig.title}

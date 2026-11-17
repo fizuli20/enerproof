@@ -1,193 +1,279 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { AppHeader } from "@/components/AppHeader";
+import { useProject } from "@/lib/store/project-context";
 import {
+  Building2,
   FileSearch,
-  LineChart,
   Sliders,
   Ruler,
   CheckCircle2,
   FileText,
-  Building2,
   ArrowRight,
-  TrendingDown,
-  DollarSign,
-  Leaf,
+  Sparkles,
+  Zap,
+  Check,
   Clock,
+  Layers,
 } from "lucide-react";
 
 export default function AppDashboard() {
-  const steps = [
-    {
-      num: "1",
-      title: "Data Audit & Gates",
-      desc: "Check interval continuity, duplicate profiles, and emissions arithmetic.",
-      href: "/app/audit",
-      icon: FileSearch,
-      status: "Active",
-    },
-    {
-      num: "2",
-      title: "Baseline Regression",
-      desc: "Degree-day weather normalization with CV(RMSE) and NMBE checks.",
-      href: "/app/baseline",
-      icon: LineChart,
-      status: "Ready",
-    },
-    {
-      num: "3",
-      title: "Interventions (ECMs)",
-      desc: "Interactive calculators for lighting, HVAC, plug load, thermal & boiler.",
-      href: "/app/interventions",
-      icon: Sliders,
-      status: "5 ECMs",
-    },
-    {
-      num: "4",
-      title: "M&V Protocol Plan",
-      desc: "IPMVP Option A/B/C mapping, metering boundaries, and duration.",
-      href: "/app/measurement",
-      icon: Ruler,
-      status: "Ready",
-    },
-    {
-      num: "5",
-      title: "Evidence Gate",
-      desc: "Deterministic refusal & ASHRAE 14 FSU uncertainty bounds evaluation.",
-      href: "/app/verify",
-      icon: CheckCircle2,
-      status: "Calibrated",
-    },
-    {
-      num: "6",
-      title: "Reports & Export",
-      desc: "Generate audit-grade PDF reports with transparent disclaimers.",
-      href: "/app/reports",
-      icon: FileText,
-      status: "1-Click PDF",
-    },
-  ];
+  const { project } = useProject();
+
+  // Summary Metrics from project state
+  const totalKwhSaved = project.interventions.reduce((acc, i) => acc + i.annualKwhSavings, 0);
+  const totalCostAzn = project.interventions.reduce((acc, i) => acc + (i.implementationCostAzn || 0), 0);
+  const totalNetAzn = project.interventions.reduce((acc, i) => acc + (i.annualNetSavingsAzn || 0), 0);
+
+  // Completed steps checklist
+  const auditPassed = project.auditSummary?.passed ?? true;
+  const baselineFitted = !!project.baselineResult;
+  const interventionsPlanned = project.interventions.length > 0;
+  const measurementConfigured = !!project.measurementPlan;
+  const evidenceEvaluated = !!project.evidenceAssessment;
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col bg-[#F4F5F0]">
       <AppHeader
-        title="Active Project: Baku Higher Oil School & Residence Campus"
-        subtitle="M&V Decision Support Workspace • Azerbaijan Non-Residential Tariff: 0.125 AZN/kWh"
+        title="Project Overview & Execution Roadmap"
+        subtitle="Manage your building profile, energy data, identified opportunities, and verification status."
       />
 
-      <main className="p-8 max-w-7xl w-full space-y-8">
-        {/* Project Metrics Summary Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="card-base p-5">
-            <div className="flex items-center justify-between text-xs text-[#68736C]">
-              <span>Annual Consumption</span>
-              <Building2 className="w-4 h-4 text-[#245C43]" />
+      <main className="p-6 sm:p-8 max-w-7xl w-full space-y-8">
+        {/* =================================================================== */}
+        {/* 1. WHICH BUILDING AM I WORKING ON?                                  */}
+        {/* =================================================================== */}
+        <div className="card-editorial p-6 sm:p-8 bg-white space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#DDE3DB] gap-3">
+            <div className="space-y-1">
+              <span className="text-xs font-mono font-semibold uppercase text-[#152E27]">
+                Active Facility Context
+              </span>
+              <h2 className="text-2xl font-display font-bold text-[#101C18]">
+                {project.metadata.name}
+              </h2>
             </div>
-            <div className="text-2xl font-bold text-[#18211C] mt-2">995,575 kWh</div>
-            <div className="text-xs text-[#68736C] mt-1">+ 602,889 m³ Boiler Gas</div>
+            <div className="flex items-center gap-2">
+              <span className="lime-pill text-xs">
+                {project.metadata.facilityType}
+              </span>
+            </div>
           </div>
 
-          <div className="card-base p-5">
-            <div className="flex items-center justify-between text-xs text-[#68736C]">
-              <span>Total ECM CapEx</span>
-              <DollarSign className="w-4 h-4 text-[#245C43]" />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs pt-1">
+            <div className="space-y-0.5">
+              <span className="text-[#5D6D63]">Location:</span>
+              <div className="font-semibold text-[#101C18]">{project.metadata.location}</div>
             </div>
-            <div className="text-2xl font-bold text-[#18211C] mt-2">90,000 AZN</div>
-            <div className="text-xs text-[#68736C] mt-1">Across 5 Recommended Measures</div>
-          </div>
-
-          <div className="card-base p-5">
-            <div className="flex items-center justify-between text-xs text-[#68736C]">
-              <span>Annual Cost Savings</span>
-              <TrendingDown className="w-4 h-4 text-[#245C43]" />
+            <div className="space-y-0.5">
+              <span className="text-[#5D6D63]">Lead Auditor:</span>
+              <div className="font-semibold text-[#101C18]">{project.metadata.leadAuditor}</div>
             </div>
-            <div className="text-2xl font-bold text-[#245C43] mt-2">35,937 AZN/yr</div>
-            <div className="text-xs text-[#68736C] mt-1">Simple Payback: 2.5 yrs</div>
-          </div>
-
-          <div className="card-base p-5">
-            <div className="flex items-center justify-between text-xs text-[#68736C]">
-              <span>Avoided CO₂</span>
-              <Leaf className="w-4 h-4 text-[#245C43]" />
+            <div className="space-y-0.5">
+              <span className="text-[#5D6D63]">Active Tariff:</span>
+              <div className="font-mono font-bold text-[#152E27]">
+                {project.tariffs.electricityTariffAznPerKwh} AZN/kWh
+              </div>
             </div>
-            <div className="text-2xl font-bold text-[#18211C] mt-2">187.4 t/yr</div>
-            <div className="text-xs text-[#68736C] mt-1">Grid Electricity & Gas Combined</div>
+            <div className="space-y-0.5">
+              <span className="text-[#5D6D63]">Grid Emissions Factor:</span>
+              <div className="font-mono text-[#101C18]">
+                {project.tariffs.gridEmissionsFactorKgPerKwh} kg CO₂/kWh
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Guided Workflow Stepper */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-[#18211C]">
-              Audit & Verification Workflow Steps
-            </h2>
-            <span className="text-xs text-[#68736C]">
-              Follow sequentially or jump directly to any module
-            </span>
-          </div>
+        {/* =================================================================== */}
+        {/* 2 & 3: WHAT INFORMATION IS AVAILABLE & WHAT HAVE I COMPLETED?       */}
+        {/* =================================================================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Progress Roadmap (7 cols) */}
+          <div className="lg:col-span-7 card-editorial p-6 sm:p-8 bg-white space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#DDE3DB]">
+              <span className="text-xs font-mono font-semibold uppercase text-[#152E27]">
+                Workflow Completion Status
+              </span>
+              <span className="text-xs text-[#5D6D63]">Step-by-step audit progress</span>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {steps.map((st) => {
-              const Icon = st.icon;
-              return (
-                <Link
-                  key={st.num}
-                  href={st.href}
-                  className="card-base p-5 flex flex-col justify-between card-hover group"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="w-6 h-6 rounded-full bg-[#E7F1EA] text-[#153C2D] font-bold text-xs flex items-center justify-center">
-                        {st.num}
-                      </span>
-                      <span className="badge-green text-[10px] font-semibold px-2 py-0.5 rounded">
-                        {st.status}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2.5">
-                      <Icon className="w-4 h-4 text-[#245C43]" />
-                      <h3 className="font-bold text-sm text-[#18211C] group-hover:text-[#245C43] transition-colors">
-                        {st.title}
-                      </h3>
-                    </div>
-
-                    <p className="text-xs text-[#68736C] leading-relaxed">
-                      {st.desc}
+            <div className="space-y-3">
+              {/* Step 1 */}
+              <Link
+                href="/app/audit"
+                className="p-3.5 rounded-xl border border-[#DDE3DB] hover:border-[#152E27] flex items-center justify-between transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
+                    auditPassed ? "bg-[#152E27] text-[#D9FF91]" : "bg-[#F4F5F0] text-[#101C18]"
+                  }`}>
+                    01
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#101C18] group-hover:text-[#152E27]">
+                      Energy Data &amp; Pre-Intervention Audit
+                    </h4>
+                    <p className="text-[11px] text-[#5D6D63]">
+                      Screen interval data for continuity, duplicates, and math errors.
                     </p>
                   </div>
+                </div>
+                <span className="text-[11px] font-semibold text-[#152E27] flex items-center gap-1">
+                  {auditPassed ? "Audited" : "Action Req."}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </Link>
 
-                  <div className="pt-4 mt-2 border-t border-[#DFE5E0] flex items-center justify-between text-xs font-semibold text-[#245C43]">
-                    <span>Open Module</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              {/* Step 2 */}
+              <Link
+                href="/app/interventions"
+                className="p-3.5 rounded-xl border border-[#DDE3DB] hover:border-[#152E27] flex items-center justify-between transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
+                    interventionsPlanned ? "bg-[#152E27] text-[#D9FF91]" : "bg-[#F4F5F0] text-[#101C18]"
+                  }`}>
+                    02
                   </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#101C18] group-hover:text-[#152E27]">
+                      Energy Conservation Opportunities
+                    </h4>
+                    <p className="text-[11px] text-[#5D6D63]">
+                      {project.interventions.length} measures modeled with full lifecycle accounting.
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[11px] font-semibold text-[#152E27] flex items-center gap-1">
+                  {project.interventions.length} ECMs
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </Link>
 
-        {/* Audit Case Callout */}
-        <div className="card-base p-6 bg-gradient-to-r from-[#FFFFFF] to-[#F8F9F7] border-l-4 border-l-[#245C43] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#245C43]">
-              Pre-Loaded Demonstration Cases
+              {/* Step 3 */}
+              <Link
+                href="/app/measurement"
+                className="p-3.5 rounded-xl border border-[#DDE3DB] hover:border-[#152E27] flex items-center justify-between transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
+                    measurementConfigured ? "bg-[#152E27] text-[#D9FF91]" : "bg-[#F4F5F0] text-[#101C18]"
+                  }`}>
+                    03
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#101C18] group-hover:text-[#152E27]">
+                      Measurement Boundary &amp; IPMVP Strategy
+                    </h4>
+                    <p className="text-[11px] text-[#5D6D63]">
+                      Isolated circuit logging (Option A) vs whole-building regression (Option C).
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[11px] font-semibold text-[#152E27] flex items-center gap-1">
+                  {project.measurementPlan?.recommendedOption || "Configured"}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </Link>
+
+              {/* Step 4 */}
+              <Link
+                href="/app/verify"
+                className="p-3.5 rounded-xl border border-[#DDE3DB] hover:border-[#152E27] flex items-center justify-between transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
+                    evidenceEvaluated ? "bg-[#152E27] text-[#D9FF91]" : "bg-[#F4F5F0] text-[#101C18]"
+                  }`}>
+                    04
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#101C18] group-hover:text-[#152E27]">
+                      Evidence Gate Determination
+                    </h4>
+                    <p className="text-[11px] text-[#5D6D63]">
+                      Deterministic evaluation against building-specific noise floor.
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[11px] font-semibold text-[#152E27] flex items-center gap-1">
+                  {project.evidenceAssessment?.classification ? "Evaluated" : "Evaluate"}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </Link>
             </div>
-            <h3 className="text-sm font-bold text-[#18211C]">
-              Want to see automated error detection on real public filings?
-            </h3>
-            <p className="text-xs text-[#68736C]">
-              Load the Baku Higher Oil School 3-year public dataset to trigger the automated 10x GHG discrepancy detection and 100% data duplication flag.
-            </p>
           </div>
-          <Link
-            href="/app/audit?demo=bhos"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#245C43] hover:bg-[#1b4733] text-white text-xs font-semibold shadow-sm shrink-0"
-          >
-            Launch BHOS Audit Case
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+
+          {/* 4 & 5: WHAT OPPORTUNITIES IDENTIFIED & WHAT SHOULD I DO NEXT? (5 cols) */}
+          <div className="lg:col-span-5 space-y-6">
+            {/* Identified Opportunities Card */}
+            <div className="bg-[#152E27] text-white rounded-2xl p-6 sm:p-7 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-white/15">
+                <span className="text-xs font-mono font-semibold uppercase text-[#D9FF91]">
+                  Identified Package Impact
+                </span>
+                <span className="text-[11px] font-mono text-[#8EA094]">{project.interventions.length} Measures</span>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <div className="text-xs text-[#8EA094]">Annual Energy Reduction</div>
+                  <div className="text-2xl font-bold font-mono text-[#D9FF91] mt-0.5">
+                    {totalKwhSaved.toLocaleString()} kWh/yr
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10 text-xs">
+                  <div>
+                    <div className="text-[#8EA094]">Annual Savings</div>
+                    <div className="text-base font-bold font-mono text-white mt-0.5">
+                      {totalNetAzn.toLocaleString()} AZN/yr
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[#8EA094]">Package CapEx</div>
+                    <div className="text-base font-bold font-mono text-white mt-0.5">
+                      {totalCostAzn.toLocaleString()} AZN
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Link
+                  href="/app/interventions"
+                  className="w-full btn-lime text-xs py-2 px-3.5 rounded-lg font-semibold flex items-center justify-center gap-1.5"
+                >
+                  <span>Inspect Energy Opportunities</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* What should I do next? */}
+            <div className="card-editorial p-6 bg-white space-y-3">
+              <span className="text-xs font-mono font-semibold uppercase text-[#152E27]">
+                Recommended Next Action
+              </span>
+              <h4 className="text-base font-bold text-[#101C18]">
+                Export Investment-Grade PDF Audit Report
+              </h4>
+              <p className="text-xs text-[#5D6D63] leading-relaxed">
+                Compile all verified energy measures, measurement schedules, and Evidence Gate determinations into an official PDF document ready for submission.
+              </p>
+              <div className="pt-1">
+                <Link
+                  href="/app/reports"
+                  className="btn-forest text-xs py-2 px-3.5 rounded-lg font-medium inline-flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Generate Report</span>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
