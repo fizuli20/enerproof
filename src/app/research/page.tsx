@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PowerCurveChart } from "@/components/PowerCurveChart";
 import { CheckCircle2, AlertTriangle, ShieldCheck, BarChart3, Layers, Database, Sparkles } from "lucide-react";
+import { ResearchHeroVisual } from "@/components/visuals/ResearchHeroVisual";
 
 export default function ResearchPage() {
   const figures = [
@@ -35,6 +36,9 @@ export default function ResearchPage() {
             Independent reproducibility audit, statistical power modeling, and empirical calibration across 152 buildings from the Building Data Genome 2 (BDG2) dataset. Conducted for the CECECO Clean Energy Hackathon 2027.
           </p>
         </div>
+
+        {/* Visual Benchmark Summary Card */}
+        <ResearchHeroVisual />
 
         {/* 1. Scientific Governance & Provenance */}
         <section className="card-editorial p-6 sm:p-8 bg-white space-y-6">

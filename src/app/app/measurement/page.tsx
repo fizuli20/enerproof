@@ -18,6 +18,7 @@ import {
   Activity,
 } from "lucide-react";
 import Link from "next/link";
+import { SmartMeterDiagram } from "@/components/visuals/SmartMeterDiagram";
 
 export default function MeasurementPage() {
   const { project, setMeasurementPlan: setStoreMeasurementPlan } = useProject();
@@ -209,6 +210,24 @@ export default function MeasurementPage() {
                 {plan.rationale}
               </p>
             </div>
+          </div>
+
+          {/* Hardware & Data Logging Schematic */}
+          <div className="pt-2 border-t border-[#DDE3DB] space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-mono font-semibold uppercase text-[#152E27] tracking-wider">
+                  Telemetry &amp; Ingestion Architecture
+                </span>
+                <h4 className="text-sm font-bold text-[#101C18]">
+                  Sub-Meter Data Pipeline &amp; Split-Core CT Installation
+                </h4>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F4F5F0] text-[#5D6D63]">
+                Zero-Cloud Client Storage
+              </span>
+            </div>
+            <SmartMeterDiagram />
           </div>
 
           {/* Risk Mitigation / Quality Assurance */}

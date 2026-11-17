@@ -22,6 +22,7 @@ import {
   Activity,
   Zap,
 } from "lucide-react";
+import { ExpectedVsObservedVisual } from "@/components/visuals/ExpectedVsObservedVisual";
 
 export default function VerifyPage() {
   const { project, setEvidenceAssessment: setStoreEvidenceAssessment } = useProject();
@@ -152,6 +153,11 @@ export default function VerifyPage() {
                 Evidence Gate: {assessment.classification}
               </div>
             </div>
+          </div>
+
+          {/* Interactive Three-Tier Savings Visualizer */}
+          <div className="pt-2">
+            <ExpectedVsObservedVisual />
           </div>
         </div>
 

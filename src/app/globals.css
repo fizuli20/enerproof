@@ -209,3 +209,73 @@ input[type="range"] {
   border-radius: 0.75rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
 }
+
+/* =========================================================================
+   V4 MOTION DESIGN & VISUAL SYSTEM KEYFRAMES
+   ========================================================================= */
+
+@keyframes pulseEnergy {
+  0%, 100% {
+    opacity: 0.3;
+    stroke-width: 1.5;
+  }
+  50% {
+    opacity: 1;
+    stroke-width: 2.5;
+  }
+}
+
+@keyframes energyDash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes glowLime {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(217, 255, 145, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(217, 255, 145, 0.8));
+  }
+}
+
+.animate-energy-pulse {
+  animation: pulseEnergy 2.4s ease-in-out infinite;
+}
+
+.animate-energy-flow {
+  stroke-dasharray: 6 6;
+  animation: energyDash 1.2s linear infinite;
+}
+
+.animate-float-gentle {
+  animation: floatGentle 4s ease-in-out infinite;
+}
+
+.animate-glow-lime {
+  animation: glowLime 3s ease-in-out infinite;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-energy-pulse,
+  .animate-energy-flow,
+  .animate-float-gentle,
+  .animate-glow-lime {
+    animation: none !important;
+  }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

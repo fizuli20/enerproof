@@ -32,7 +32,10 @@ import {
   ShieldCheck,
   AlertTriangle,
   Layers,
+  Eye,
 } from "lucide-react";
+import { LightingRetrofitVisual } from "@/components/visuals/LightingRetrofitVisual";
+import { HvacSystemsVisual } from "@/components/visuals/HvacSystemsVisual";
 
 type ScenarioMode = "conservative" | "base" | "optimistic";
 
@@ -49,6 +52,7 @@ export default function InterventionsPage() {
 
   // Scenario toggle
   const [scenario, setScenario] = useState<ScenarioMode>("base");
+  const [visualTab, setVisualTab] = useState<"lighting" | "hvac">("lighting");
 
   // Safeguard confirmation
   const [comfortVentilationConfirmed, setComfortVentilationConfirmed] = useState<boolean>(true);
@@ -398,6 +402,51 @@ export default function InterventionsPage() {
             <div className="text-[11px] text-[#5D6D63] mt-1">
               {combinedPaybackYears !== null ? "Total investment / net annual" : "Net annual savings ≤ 0"}
             </div>
+          </div>
+        </div>
+
+        {/* Visual Engineering Models */}
+        <div className="card-editorial p-6 bg-white space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-[#DDE3DB]">
+            <div>
+              <span className="text-xs font-mono font-semibold uppercase text-[#152E27] tracking-wider">
+                Engineering Visualizer &bull; Physical Mechanics
+              </span>
+              <h3 className="text-sm font-bold text-[#101C18]">
+                Interactive Equipment &amp; Retrofit Schematics
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setVisualTab("lighting")}
+                className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                  visualTab === "lighting"
+                    ? "bg-[#152E27] text-[#D9FF91]"
+                    : "bg-[#F4F5F0] text-[#5D6D63] hover:text-[#101C18]"
+                }`}
+              >
+                LED vs Fluorescent Model
+              </button>
+              <button
+                onClick={() => setVisualTab("hvac")}
+                className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                  visualTab === "hvac"
+                    ? "bg-[#152E27] text-[#D9FF91]"
+                    : "bg-[#F4F5F0] text-[#5D6D63] hover:text-[#101C18]"
+                }`}
+              >
+                HVAC Runtime &amp; Setbacks
+              </button>
+            </div>
+          </div>
+
+          <div>
+            {visualTab === "lighting" ? (
+              <LightingRetrofitVisual />
+            ) : (
+              <HvacSystemsVisual />
+            )}
           </div>
         </div>
 

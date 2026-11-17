@@ -13,6 +13,11 @@ import {
 import { generateMeasurementPlan } from "@/lib/measurement/planner";
 import { evaluateEvidenceGate } from "@/lib/evidence/evidence-gate";
 import { generateEnerProofReport } from "@/lib/reports/pdf-generator";
+import { DataQualitySummary } from "@/lib/types";
+import { BaselineRegressionResult } from "@/lib/baseline/regression";
+import { BuildingCutaway } from "@/components/visuals/BuildingCutaway";
+import { SmartMeterDiagram } from "@/components/visuals/SmartMeterDiagram";
+import { EvidenceGateVisual } from "@/components/visuals/EvidenceGateVisual";
 import {
   Sparkles,
   ArrowRight,
@@ -21,7 +26,6 @@ import {
   Download,
   CheckCircle2,
   AlertCircle,
-  HelpCircle,
   Building,
   Lightbulb,
   Fan,
@@ -34,6 +38,8 @@ import {
   ChevronRight,
   Check,
   Info,
+  ShieldCheck,
+  Activity,
 } from "lucide-react";
 
 export default function JudgeExperiencePage() {
@@ -105,82 +111,105 @@ export default function JudgeExperiencePage() {
           annualAzn: lightingResult.annualNetSavingsAzn,
           investmentAzn: lightingResult.totalInitialInvestmentAzn,
           paybackYears: lightingResult.simplePaybackYears,
-          category: "lighting" as const,
+          avoidedCo2: lightingResult.avoidedCo2TonnesYear,
+          notes: "40W delta per fixture, 300 operating days/year, 15-minute runtime logging.",
         }
       : selectedEcm === "hvac"
       ? {
-          title: "HVAC Scheduling & Night Setback",
+          title: "HVAC Scheduling & Setbacks",
           annualKwh: hvacResult.annualKwhSavings,
           annualAzn: hvacResult.annualNetSavingsAzn,
           investmentAzn: hvacResult.totalInitialInvestmentAzn,
           paybackYears: hvacResult.simplePaybackYears,
-          category: "hvac" as const,
+          avoidedCo2: hvacResult.avoidedCo2TonnesYear,
+          notes: "25 runtime hours reduced weekly during 26-week cooling season with fresh-air safeguard.",
         }
       : {
-          title: "Standby Plug Load Power Timers",
+          title: "Plug Load Management",
           annualKwh: plugResult.annualKwhSavings,
           annualAzn: plugResult.annualNetSavingsAzn,
           investmentAzn: plugResult.totalInitialInvestmentAzn,
           paybackYears: plugResult.simplePaybackYears,
-          category: "plug_load" as const,
+          avoidedCo2: plugResult.avoidedCo2TonnesYear,
+          notes: "250 smart timer cutoffs eliminating overnight standby idle power.",
         };
 
   // Measurement Plan
   const measurementPlan = generateMeasurementPlan({
-    category: activeEcmResult.category,
-    expectedSavingsPct: 15.0,
-    baselineCvRmsePct: 11.5,
+    category: selectedEcm === "lighting" ? "lighting" : selectedEcm === "hvac" ? "hvac" : "plug_load",
+    expectedSavingsPct: (activeEcmResult.annualKwh / 300000) * 100,
+    baselineCvRmsePct: 14.8,
     resolution: "daily",
     hasSubmetering: measurementScenario === "complete",
   });
 
-  // Genuine Evidence Gate Evaluation
+  const mockQuality: DataQualitySummary = {
+    totalRows: 180,
+    missingRows: 0,
+    missingPct: 0,
+    zeroCount: 0,
+    zeroPct: 0,
+    maxConsecutiveZeros: 0,
+    hasNegativeValues: false,
+    hasDuplicateAnnualProfile: false,
+    isContinuousTimestamps: true,
+    flags: [],
+    passed: true,
+  };
+
+  const mockBaselineModel: BaselineRegressionResult = {
+    coefficients: { intercept: 500, hddCoeff: 25, cddCoeff: 35, occCoeff: null },
+    hasOccupancyFeature: false,
+    trainingDiagnostics: { r2: 0.88, rmse: 120, cvRmsePct: 14.8, nmbePct: 2.1, sampleCount: 145 },
+    calibrationDiagnostics: { r2: 0.86, rmse: 130, cvRmsePct: 14.8, nmbePct: 2.1, sampleCount: 35, r1Autocorr: 0.32 },
+    screeningStatus: "MEETS_SCREENING_CRITERIA",
+    screeningNotes: [],
+    trainSampleSize: 145,
+    calibSampleSize: 35,
+    hasNegativePredictions: false,
+    cvRmsePct: 14.8,
+    r2: 0.88,
+  };
+
+  // Evidence Gate Evaluation
   const isInsufficient = measurementScenario === "insufficient";
   const evidenceAssessment = evaluateEvidenceGate({
-    context: isInsufficient
-      ? "WHOLE_BUILDING_COUNTERFACTUAL_OPTION_C"
-      : "EQUIPMENT_ISOLATION_OPTION_A_B",
+    context:
+      measurementScenario === "complete"
+        ? "EQUIPMENT_ISOLATION_OPTION_A_B"
+        : "WHOLE_BUILDING_COUNTERFACTUAL_OPTION_C",
     apparentSavingsKwh: isInsufficient ? 8000 : activeEcmResult.annualKwh,
     baselineEnergyKwh: 300000,
-    reportingObservations: isInsufficient ? 14 : 180,
-    dataQuality: {
-      totalRows: 180,
-      missingRows: 0,
-      missingPct: 0.0,
-      zeroCount: 0,
-      zeroPct: 0.0,
-      maxConsecutiveZeros: 0,
-      hasNegativeValues: false,
-      hasDuplicateAnnualProfile: false,
-      isContinuousTimestamps: true,
-      flags: [],
-      passed: true,
-    },
-    baselineModel: isInsufficient
-      ? {
-          coefficients: { intercept: 1200, hddCoeff: 35, cddCoeff: 50, occCoeff: null },
-          hasOccupancyFeature: false,
-          trainingDiagnostics: { r2: 0.88, rmse: 120, cvRmsePct: 12.0, nmbePct: 1.2, sampleCount: 180 },
-          calibrationDiagnostics: {
-            r2: 0.82,
-            rmse: 140,
-            cvRmsePct: 14.5,
-            nmbePct: 2.1,
-            sampleCount: 30,
-            r1Autocorr: 0.35,
-          },
-          screeningStatus: "MEETS_SCREENING_CRITERIA",
-          screeningNotes: [],
-          trainSampleSize: 180,
-          calibSampleSize: 30,
-          hasNegativePredictions: false,
-        }
-      : null,
+    reportingObservations: measurementScenario === "complete" ? 60 : 14, // 14 days causes FSU > 50%
+    dataQuality: mockQuality,
+    baselineModel: measurementScenario === "complete" ? null : mockBaselineModel,
+    resolution: "daily",
+    unresolvedNonRoutineEvents: isInsufficient,
+    directEquipmentSavingsPct: (activeEcmResult.annualKwh / 300000) * 100,
   });
 
   const handleDownloadReport = () => {
-    const doc = generateEnerProofReport(project, "comprehensive");
-    doc.save("EnerProof_Judge_Evaluation_Report.pdf");
+    const doc = generateEnerProofReport(
+      {
+        ...project,
+        metadata: {
+          ...project.metadata,
+          name: "Baku Student Residence Hall 1",
+          facilityType: "University Living Complex",
+        },
+        interventions: [
+          selectedEcm === "lighting"
+            ? lightingResult
+            : selectedEcm === "hvac"
+            ? hvacResult
+            : plugResult,
+        ],
+        measurementPlan,
+        evidenceAssessment,
+      },
+      "comprehensive"
+    );
+    doc.save("EnerProof_Evaluation_Baku_Student_Residence_Hall_1.pdf");
   };
 
   const handleReset = () => {
@@ -188,8 +217,6 @@ export default function JudgeExperiencePage() {
     setSelectedEcm("lighting");
     setFixtureCount(500);
     setHoursPerDay(12);
-    setBaselineWatts(64);
-    setRetrofitWatts(24);
     setTariff(0.125);
     setCostPerFixture(35);
     setMeasurementScenario("complete");
@@ -197,10 +224,10 @@ export default function JudgeExperiencePage() {
 
   // Step titles & descriptions
   const stepTitles = [
-    { num: 1, label: "Meet the Building" },
-    { num: 2, label: "Choose Improvement" },
-    { num: 3, label: "Potential Impact" },
-    { num: 4, label: "Measurement Plan" },
+    { num: 1, label: "Meet Building" },
+    { num: 2, label: "Opportunity" },
+    { num: 3, label: "Impact" },
+    { num: 4, label: "Measurement" },
     { num: 5, label: "Evidence Verdict" },
     { num: 6, label: "Research Deep Dive" },
   ];
@@ -250,7 +277,7 @@ export default function JudgeExperiencePage() {
                 <button
                   key={s.num}
                   onClick={() => setCurrentStep(s.num)}
-                  className={`text-left group transition-all`}
+                  className="text-left group transition-all"
                 >
                   <div
                     className={`h-1.5 rounded-full transition-all ${
@@ -288,54 +315,24 @@ export default function JudgeExperiencePage() {
               <span className="text-xs text-[#5D6D63]">Illustrative Case Study</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-              <div className="md:col-span-7 space-y-4">
-                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#F4F5F0] text-xs font-mono text-[#152E27]">
-                  <Building className="w-4 h-4" />
-                  Baku Student Residence Hall 1 &bull; Absheron Peninsula
-                </div>
-
-                <h2 className="text-2xl font-display font-bold text-[#101C18] tracking-tight">
-                  A 500-occupant university dormitory with high lighting and cooling bills.
-                </h2>
-
-                <p className="text-sm text-[#5D6D63] leading-relaxed">
-                  The facility operator wants to reduce annual utility expenditures by 5–15%, but has no centralized building automation system and cannot afford risky speculative retrofits.
-                </p>
-
-                <p className="text-sm text-[#5D6D63] leading-relaxed">
-                  Before investing in capital hardware, the facility director needs to know: <em>Which improvement is worthwhile, how much will it actually save, and how can we prove the savings to our university leadership?</em>
-                </p>
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#F4F5F0] text-xs font-mono text-[#152E27]">
+                <Building className="w-4 h-4" />
+                Baku Student Residence Hall 1 &bull; Absheron Peninsula
               </div>
 
-              {/* Baseline Snapshot Card */}
-              <div className="md:col-span-5 bg-[#152E27] text-white rounded-xl p-6 space-y-4">
-                <div className="text-xs font-mono uppercase tracking-wider text-[#D9FF91] pb-2 border-b border-white/15">
-                  Current Energy Profile
-                </div>
-                <div className="space-y-3 text-xs">
-                  <div className="flex justify-between py-1 border-b border-white/10">
-                    <span className="text-[#8EA094]">Facility Occupancy:</span>
-                    <span className="font-mono font-bold text-white">500 students</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-white/10">
-                    <span className="text-[#8EA094]">Common Area Lights:</span>
-                    <span className="font-mono font-bold text-white">500 fixtures (64W)</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-white/10">
-                    <span className="text-[#8EA094]">Central Cooling:</span>
-                    <span className="font-mono font-bold text-white">120 kW split-units</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-white/10">
-                    <span className="text-[#8EA094]">Electricity Tariff:</span>
-                    <span className="font-mono font-bold text-[#D9FF91]">0.125 AZN/kWh</span>
-                  </div>
-                  <div className="flex justify-between pt-1">
-                    <span className="text-[#8EA094]">Annual Electricity:</span>
-                    <span className="font-mono font-bold text-white">~300,000 kWh/yr</span>
-                  </div>
-                </div>
-              </div>
+              <h2 className="text-2xl font-display font-bold text-[#101C18] tracking-tight">
+                A 500-occupant university dormitory with high lighting and cooling bills.
+              </h2>
+
+              <p className="text-sm text-[#5D6D63] leading-relaxed">
+                The facility operator wants to reduce annual utility expenditures by 5–15%, but has no centralized building automation system and cannot afford risky speculative retrofits.
+              </p>
+            </div>
+
+            {/* Embedded Architectural Cutaway Visual */}
+            <div className="pt-2">
+              <BuildingCutaway compact={true} />
             </div>
 
             <div className="pt-4 border-t border-[#DDE3DB] flex items-center justify-between">
@@ -374,7 +371,7 @@ export default function JudgeExperiencePage() {
               </p>
             </div>
 
-            {/* 3 Selectable Options */}
+            {/* 3 Selectable Visual Options */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Option 1: Lighting (Default) */}
               <button
@@ -402,7 +399,7 @@ export default function JudgeExperiencePage() {
                   </p>
                 </div>
                 <div className="text-[11px] font-mono text-[#152E27] font-semibold pt-1">
-                  Easiest to measure &bull; ~1.9 yr payback
+                  Easiest to measure &bull; ~2.7 yr payback
                 </div>
               </button>
 
@@ -426,17 +423,17 @@ export default function JudgeExperiencePage() {
                   )}
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-[#101C18]">2. HVAC Scheduling Setback</h3>
+                  <h3 className="font-bold text-sm text-[#101C18]">2. HVAC Night Setbacks</h3>
                   <p className="text-xs text-[#5D6D63] mt-1 leading-relaxed">
-                    Automate evening temperature setbacks across 120 kW cooling units while preserving dormitory ventilation.
+                    Program night temperature setbacks and unoccupied shutoffs on 120 kW split-unit cooling.
                   </p>
                 </div>
                 <div className="text-[11px] font-mono text-[#152E27] font-semibold pt-1">
-                  High savings &bull; ~0.8 yr payback
+                  High return &bull; 0.9 yr payback
                 </div>
               </button>
 
-              {/* Option 3: Plug Load Timers */}
+              {/* Option 3: Plug Load Management */}
               <button
                 onClick={() => setSelectedEcm("plug")}
                 className={`p-5 rounded-xl border text-left transition-all space-y-3 ${
@@ -456,26 +453,24 @@ export default function JudgeExperiencePage() {
                   )}
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-[#101C18]">3. Standby Plug Load Cutoff</h3>
+                  <h3 className="font-bold text-sm text-[#101C18]">3. Smart Plug Load Timers</h3>
                   <p className="text-xs text-[#5D6D63] mt-1 leading-relaxed">
-                    Cut off 250 idle computer workstations and drinking fountains during unoccupied midnight hours (12h/day).
+                    Deploy 250 smart timer cutoffs on computer workstations and water coolers to eliminate idle standby.
                   </p>
                 </div>
                 <div className="text-[11px] font-mono text-[#152E27] font-semibold pt-1">
-                  Low capital &bull; ~1.3 yr payback
+                  Low CapEx &bull; 3.3 yr payback
                 </div>
               </button>
             </div>
 
-            {/* Parameter Adjustment Panel for Selected ECM */}
+            {/* Parameter Adjustment Panel */}
             {selectedEcm === "lighting" && (
-              <div className="p-4 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] space-y-4">
-                <div className="text-xs font-semibold text-[#101C18]">
-                  Adjust Lighting Upgrade Assumptions:
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              <div className="p-4 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] space-y-3 text-xs">
+                <span className="font-semibold text-[#101C18] block">Adjust Lighting Parameters:</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-[#5D6D63] mb-1">Fixture Count: {fixtureCount}</label>
+                    <label className="block text-[#5D6D63] mb-1">Fixtures: {fixtureCount} units</label>
                     <input
                       type="range"
                       min="100"
@@ -695,25 +690,9 @@ export default function JudgeExperiencePage() {
               </button>
             </div>
 
-            {/* Measurement Requirements Box */}
-            <div className="p-4 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] space-y-2 text-xs">
-              <div className="font-semibold text-[#101C18]">
-                Required Measurement Checklist ({measurementPlan.recommendedOption}):
-              </div>
-              <ul className="space-y-1.5 text-[#5D6D63]">
-                <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-[#152E27]" />
-                  <span><strong>Boundary:</strong> {measurementPlan.meteringBoundary}</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-[#152E27]" />
-                  <span><strong>Logging:</strong> {measurementPlan.loggingIntervalMinutes}-minute intervals for {measurementPlan.minimumRecommendedDurationDays} days</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-[#152E27]" />
-                  <span><strong>Target Uncertainty:</strong> &le; {measurementPlan.expectedFsuPct.toFixed(1)}% sampling uncertainty</span>
-                </li>
-              </ul>
+            {/* Smart Meter Diagram Preview */}
+            <div className="pt-2">
+              <SmartMeterDiagram />
             </div>
 
             <div className="pt-4 border-t border-[#DDE3DB] flex items-center justify-between">
@@ -858,7 +837,7 @@ export default function JudgeExperiencePage() {
 
             {/* 3 Research Assets Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Asset 1 */}
+              {/* Asset 1: BHOS Audit */}
               <div className="p-5 rounded-xl border border-[#DDE3DB] bg-[#F4F5F0] space-y-3">
                 <span className="text-xs font-mono font-bold uppercase text-[#B74740]">
                   Local Case Study
@@ -878,7 +857,7 @@ export default function JudgeExperiencePage() {
                 </Link>
               </div>
 
-              {/* Asset 2 */}
+              {/* Asset 2: BDG2 152 Buildings */}
               <div className="p-5 rounded-xl border border-[#DDE3DB] bg-[#F4F5F0] space-y-3">
                 <span className="text-xs font-mono font-bold uppercase text-[#152E27]">
                   Empirical Science
@@ -898,7 +877,7 @@ export default function JudgeExperiencePage() {
                 </Link>
               </div>
 
-              {/* Asset 3 */}
+              {/* Asset 3: Full Workspace */}
               <div className="p-5 rounded-xl border border-[#DDE3DB] bg-[#F4F5F0] space-y-3">
                 <span className="text-xs font-mono font-bold uppercase text-[#152E27]">
                   Full Workspace

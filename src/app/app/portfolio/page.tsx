@@ -23,6 +23,7 @@ import {
   BarChart2,
   Sparkles,
 } from "lucide-react";
+import { PortfolioMapVisual } from "@/components/visuals/PortfolioMapVisual";
 
 export default function PortfolioPage() {
   const { project } = useProject();
@@ -198,6 +199,9 @@ export default function PortfolioPage() {
                 {userPortfolio.uncertaintyNotes}
               </p>
             </div>
+
+            {/* Campus Portfolio Architectural Map */}
+            <PortfolioMapVisual />
 
             {/* Buildings List Table */}
             <div className="card-editorial p-6 bg-white space-y-4">

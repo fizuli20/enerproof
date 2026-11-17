@@ -248,6 +248,102 @@ function AuditContent() {
           </div>
         )}
 
+        {/* =================================================================== */}
+        {/* VISUAL FORENSIC AUDIT SPOTLIGHT                                    */}
+        {/* =================================================================== */}
+        {auditResult && !auditResult.temporalIndependencePass && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Visual 1: Duplicate Year Forensic Comparison */}
+            <div className="card-editorial p-6 bg-white space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#DDE3DB]">
+                <div>
+                  <span className="text-xs font-mono font-bold uppercase text-[#B74740]">
+                    Forensic Artifact 1 &bull; 100% Identical Monthly Profiles
+                  </span>
+                  <h4 className="text-sm font-bold text-[#101C18]">
+                    2023 vs 2024 Reporting Duplication
+                  </h4>
+                </div>
+                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[#FEE2E2] text-[#991B1B]">
+                  &Delta; = 0.000 kWh
+                </span>
+              </div>
+
+              <p className="text-xs text-[#5D6D63] leading-relaxed">
+                Comparison of 4 sampled calendar months reveals exact identical values across years. True weather and occupancy variability never produces identical electricity or gas consumption.
+              </p>
+
+              <div className="space-y-2 font-mono text-xs">
+                {[
+                  { month: "Jan (Heating Peak)", y23: 110480, y24: 110480, gas23: 135000, gas24: 135000 },
+                  { month: "Apr (Spring Base)", y23: 78540, y24: 78540, gas23: 22000, gas24: 22000 },
+                  { month: "Jul (Summer Chiller)", y23: 92450, y24: 92450, gas23: 4500, gas24: 4500 },
+                  { month: "Oct (Fall Transition)", y23: 77260, y24: 77260, gas23: 18000, gas24: 18000 },
+                ].map((row, i) => (
+                  <div key={i} className="p-2.5 rounded-lg bg-[#FEF3C7]/40 border border-[#FDE68A] flex items-center justify-between">
+                    <div>
+                      <span className="font-sans font-bold text-[#92400E] block text-[11px]">{row.month}</span>
+                      <span className="text-[10px] text-[#5D6D63]">Campus Electricity:</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[#92400E] font-bold">2023: {row.y23.toLocaleString()} kWh</span>
+                      <span className="text-[#B74740] font-bold block text-[10px]">2024: {row.y24.toLocaleString()} kWh (Identical)</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="text-[11px] text-[#5D6D63] pt-1">
+                <strong>Corrective Action:</strong> Discard 2024 copy-forward series from baseline regression. Install physical submeters to log genuine interval consumption.
+              </div>
+            </div>
+
+            {/* Visual 2: 10x Emissions Factor Math Audit */}
+            <div className="card-editorial p-6 bg-white space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#DDE3DB]">
+                <div>
+                  <span className="text-xs font-mono font-bold uppercase text-[#B74740]">
+                    Forensic Artifact 2 &bull; Arithmetic Scaling Discrepancy
+                  </span>
+                  <h4 className="text-sm font-bold text-[#101C18]">
+                    10x Grid Emissions Calculation Error
+                  </h4>
+                </div>
+                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[#FEE2E2] text-[#991B1B]">
+                  10.00x Overstatement
+                </span>
+              </div>
+
+              <p className="text-xs text-[#5D6D63] leading-relaxed">
+                Public sustainability filing reported ~4,978 tonnes CO₂ for 2022 electricity. Applying Azerbaijan&apos;s official grid emissions factor reveals a decimal shift:
+              </p>
+
+              <div className="p-4 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] space-y-3 font-mono text-xs">
+                <div className="flex items-center justify-between border-b border-[#DDE3DB] pb-2">
+                  <span className="text-[#5D6D63] font-sans">Reported 2022 Electricity:</span>
+                  <span className="font-bold text-[#101C18]">995,575 kWh</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-[#DDE3DB] pb-2">
+                  <span className="text-[#5D6D63] font-sans">Grid Factor:</span>
+                  <span className="font-bold text-[#152E27]">0.50 kg CO₂ / kWh</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-[#DDE3DB] pb-2">
+                  <span className="text-[#5D6D63] font-sans">Correct Calculation:</span>
+                  <span className="font-bold text-[#152E27]">497.79 metric tonnes</span>
+                </div>
+                <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-[#FDE68A]">
+                  <span className="text-[#92400E] font-sans font-bold">Public Filing Claim:</span>
+                  <span className="font-bold text-[#B74740]">4,978.0 metric tonnes</span>
+                </div>
+              </div>
+
+              <div className="text-[11px] text-[#5D6D63] pt-1">
+                <strong>Root Cause:</strong> Kilograms were transcribed as metric tonnes without dividing by 1,000, inflating reported baseline greenhouse emissions tenfold.
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Actionable Engineering Findings & Expandable Technical Details */}
         {auditResult && (
           <div className="card-editorial p-6 sm:p-7 bg-white space-y-4">

@@ -17,7 +17,12 @@ import {
   Check,
   Clock,
   Layers,
+  ShieldCheck,
+  TrendingUp,
+  Activity,
+  AlertTriangle,
 } from "lucide-react";
+import { BuildingCutaway } from "@/components/visuals/BuildingCutaway";
 
 export default function AppDashboard() {
   const { project } = useProject();
@@ -34,6 +39,49 @@ export default function AppDashboard() {
   const measurementConfigured = !!project.measurementPlan;
   const evidenceEvaluated = !!project.evidenceAssessment;
 
+  const steps = [
+    {
+      num: "01",
+      title: "Data Audit",
+      subtitle: "Screen for duplicates & math errors",
+      href: "/app/audit",
+      status: auditPassed ? "Audited" : "Needs Review",
+      done: true,
+    },
+    {
+      num: "02",
+      title: "Opportunities",
+      subtitle: `${project.interventions.length} physics-based ECMs`,
+      href: "/app/interventions",
+      status: `${project.interventions.length} Measures`,
+      done: interventionsPlanned,
+    },
+    {
+      num: "03",
+      title: "M&V Plan",
+      subtitle: project.measurementPlan?.recommendedOption || "Option A/C strategy",
+      href: "/app/measurement",
+      status: "Configured",
+      done: measurementConfigured,
+    },
+    {
+      num: "04",
+      title: "Evidence Gate",
+      subtitle: "Deterministic noise floor check",
+      href: "/app/verify",
+      status: evidenceEvaluated ? "Evaluated" : "Evaluate",
+      done: evidenceEvaluated,
+    },
+    {
+      num: "05",
+      title: "Reports & Export",
+      subtitle: "Investment-grade PDF & JSON",
+      href: "/app/reports",
+      status: "Ready",
+      done: true,
+    },
+  ];
+
   return (
     <div className="flex-1 flex flex-col bg-[#F4F5F0]">
       <AppHeader
@@ -43,172 +91,110 @@ export default function AppDashboard() {
 
       <main className="p-6 sm:p-8 max-w-7xl w-full space-y-8">
         {/* =================================================================== */}
-        {/* 1. WHICH BUILDING AM I WORKING ON?                                  */}
+        {/* VISUAL PROJECT TIMELINE                                              */}
         {/* =================================================================== */}
-        <div className="card-editorial p-6 sm:p-8 bg-white space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#DDE3DB] gap-3">
-            <div className="space-y-1">
-              <span className="text-xs font-mono font-semibold uppercase text-[#152E27]">
-                Active Facility Context
+        <div className="card-editorial p-6 bg-white space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#DDE3DB] gap-2">
+            <div>
+              <span className="text-xs font-mono font-semibold uppercase text-[#152E27] tracking-wider">
+                End-to-End Verification Pipeline
               </span>
-              <h2 className="text-2xl font-display font-bold text-[#101C18]">
-                {project.metadata.name}
-              </h2>
+              <h3 className="text-sm font-bold text-[#101C18]">
+                Audit-to-Action Workflow Progress
+              </h3>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="lime-pill text-xs">
-                {project.metadata.facilityType}
-              </span>
-            </div>
+            <span className="text-xs font-mono text-[#5D6D63]">
+              Active Building: <strong className="text-[#101C18]">{project.metadata.name}</strong>
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs pt-1">
-            <div className="space-y-0.5">
-              <span className="text-[#5D6D63]">Location:</span>
-              <div className="font-semibold text-[#101C18]">{project.metadata.location}</div>
-            </div>
-            <div className="space-y-0.5">
-              <span className="text-[#5D6D63]">Lead Auditor:</span>
-              <div className="font-semibold text-[#101C18]">{project.metadata.leadAuditor}</div>
-            </div>
-            <div className="space-y-0.5">
-              <span className="text-[#5D6D63]">Active Tariff:</span>
-              <div className="font-mono font-bold text-[#152E27]">
-                {project.tariffs.electricityTariffAznPerKwh} AZN/kWh
-              </div>
-            </div>
-            <div className="space-y-0.5">
-              <span className="text-[#5D6D63]">Grid Emissions Factor:</span>
-              <div className="font-mono text-[#101C18]">
-                {project.tariffs.gridEmissionsFactorKgPerKwh} kg CO₂/kWh
-              </div>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {steps.map((st, i) => (
+              <Link
+                key={st.num}
+                href={st.href}
+                className={`p-3.5 rounded-xl border transition-all text-left flex flex-col justify-between group ${
+                  st.done
+                    ? "bg-[#152E27]/5 border-[#152E27]/20 hover:border-[#152E27]"
+                    : "bg-[#F4F5F0]/60 border-[#DDE3DB] hover:border-[#101C18]"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                    st.done ? "bg-[#152E27] text-[#D9FF91]" : "bg-[#DDE3DB] text-[#5D6D63]"
+                  }`}>
+                    {st.num}
+                  </span>
+                  <span className="text-[10px] font-semibold text-[#152E27] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                    {st.status}
+                    <ArrowRight className="w-2.5 h-2.5" />
+                  </span>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#101C18] group-hover:text-[#152E27]">
+                    {st.title}
+                  </div>
+                  <div className="text-[10px] text-[#5D6D63] line-clamp-1 mt-0.5">
+                    {st.subtitle}
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
 
         {/* =================================================================== */}
-        {/* 2 & 3: WHAT INFORMATION IS AVAILABLE & WHAT HAVE I COMPLETED?       */}
+        {/* 1. FACILITY CONTEXT & INTERACTIVE CUTAWAY                           */}
         {/* =================================================================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Progress Roadmap (7 cols) */}
-          <div className="lg:col-span-7 card-editorial p-6 sm:p-8 bg-white space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#DDE3DB]">
-              <span className="text-xs font-mono font-semibold uppercase text-[#152E27]">
-                Workflow Completion Status
-              </span>
-              <span className="text-xs text-[#5D6D63]">Step-by-step audit progress</span>
-            </div>
-
-            <div className="space-y-3">
-              {/* Step 1 */}
-              <Link
-                href="/app/audit"
-                className="p-3.5 rounded-xl border border-[#DDE3DB] hover:border-[#152E27] flex items-center justify-between transition-colors group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
-                    auditPassed ? "bg-[#152E27] text-[#D9FF91]" : "bg-[#F4F5F0] text-[#101C18]"
-                  }`}>
-                    01
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-[#101C18] group-hover:text-[#152E27]">
-                      Energy Data &amp; Pre-Intervention Audit
-                    </h4>
-                    <p className="text-[11px] text-[#5D6D63]">
-                      Screen interval data for continuity, duplicates, and math errors.
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[11px] font-semibold text-[#152E27] flex items-center gap-1">
-                  {auditPassed ? "Audited" : "Action Req."}
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </Link>
-
-              {/* Step 2 */}
-              <Link
-                href="/app/interventions"
-                className="p-3.5 rounded-xl border border-[#DDE3DB] hover:border-[#152E27] flex items-center justify-between transition-colors group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
-                    interventionsPlanned ? "bg-[#152E27] text-[#D9FF91]" : "bg-[#F4F5F0] text-[#101C18]"
-                  }`}>
-                    02
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-[#101C18] group-hover:text-[#152E27]">
-                      Energy Conservation Opportunities
-                    </h4>
-                    <p className="text-[11px] text-[#5D6D63]">
-                      {project.interventions.length} measures modeled with full lifecycle accounting.
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[11px] font-semibold text-[#152E27] flex items-center gap-1">
-                  {project.interventions.length} ECMs
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </Link>
-
-              {/* Step 3 */}
-              <Link
-                href="/app/measurement"
-                className="p-3.5 rounded-xl border border-[#DDE3DB] hover:border-[#152E27] flex items-center justify-between transition-colors group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
-                    measurementConfigured ? "bg-[#152E27] text-[#D9FF91]" : "bg-[#F4F5F0] text-[#101C18]"
-                  }`}>
-                    03
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-[#101C18] group-hover:text-[#152E27]">
-                      Measurement Boundary &amp; IPMVP Strategy
-                    </h4>
-                    <p className="text-[11px] text-[#5D6D63]">
-                      Isolated circuit logging (Option A) vs whole-building regression (Option C).
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[11px] font-semibold text-[#152E27] flex items-center gap-1">
-                  {project.measurementPlan?.recommendedOption || "Configured"}
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </Link>
-
-              {/* Step 4 */}
-              <Link
-                href="/app/verify"
-                className="p-3.5 rounded-xl border border-[#DDE3DB] hover:border-[#152E27] flex items-center justify-between transition-colors group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
-                    evidenceEvaluated ? "bg-[#152E27] text-[#D9FF91]" : "bg-[#F4F5F0] text-[#101C18]"
-                  }`}>
-                    04
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-[#101C18] group-hover:text-[#152E27]">
-                      Evidence Gate Determination
-                    </h4>
-                    <p className="text-[11px] text-[#5D6D63]">
-                      Deterministic evaluation against building-specific noise floor.
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[11px] font-semibold text-[#152E27] flex items-center gap-1">
-                  {project.evidenceAssessment?.classification ? "Evaluated" : "Evaluate"}
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </Link>
-            </div>
-          </div>
-
-          {/* 4 & 5: WHAT OPPORTUNITIES IDENTIFIED & WHAT SHOULD I DO NEXT? (5 cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Facility Details & Key Metrics (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            {/* Identified Opportunities Card */}
+            <div className="card-editorial p-6 sm:p-7 bg-white space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#DDE3DB]">
+                <span className="text-xs font-mono font-semibold uppercase text-[#152E27]">
+                  Active Facility Profile
+                </span>
+                <span className="lime-pill text-xs">
+                  {project.metadata.facilityType}
+                </span>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-display font-bold text-[#101C18]">
+                  {project.metadata.name}
+                </h2>
+                <p className="text-xs text-[#5D6D63] mt-1">
+                  {project.metadata.location} &bull; Lead Auditor: {project.metadata.leadAuditor}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[#DDE3DB] text-xs">
+                <div className="p-3 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB]">
+                  <span className="text-[#5D6D63] text-[11px] block">Electricity Tariff</span>
+                  <span className="font-mono font-bold text-sm text-[#152E27]">
+                    {project.tariffs.electricityTariffAznPerKwh} AZN/kWh
+                  </span>
+                </div>
+                <div className="p-3 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB]">
+                  <span className="text-[#5D6D63] text-[11px] block">Grid Emissions</span>
+                  <span className="font-mono font-bold text-sm text-[#101C18]">
+                    {project.tariffs.gridEmissionsFactorKgPerKwh} kg/kWh
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Link
+                  href="/app/audit"
+                  className="w-full btn-forest text-xs py-2 px-3.5 rounded-lg inline-flex items-center justify-center gap-1.5"
+                >
+                  <FileSearch className="w-3.5 h-3.5" />
+                  <span>Inspect Pre-Intervention Energy Data</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Opportunities Impact Summary Card */}
             <div className="bg-[#152E27] text-white rounded-2xl p-6 sm:p-7 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-white/15">
                 <span className="text-xs font-mono font-semibold uppercase text-[#D9FF91]">
@@ -227,7 +213,7 @@ export default function AppDashboard() {
 
                 <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10 text-xs">
                   <div>
-                    <div className="text-[#8EA094]">Annual Savings</div>
+                    <div className="text-[#8EA094]">Annual Net Savings</div>
                     <div className="text-base font-bold font-mono text-white mt-0.5">
                       {totalNetAzn.toLocaleString()} AZN/yr
                     </div>
@@ -246,22 +232,22 @@ export default function AppDashboard() {
                   href="/app/interventions"
                   className="w-full btn-lime text-xs py-2 px-3.5 rounded-lg font-semibold flex items-center justify-center gap-1.5"
                 >
-                  <span>Inspect Energy Opportunities</span>
+                  <span>Explore 5 Engineering Measures</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>
 
-            {/* What should I do next? */}
+            {/* Next Step Card */}
             <div className="card-editorial p-6 bg-white space-y-3">
               <span className="text-xs font-mono font-semibold uppercase text-[#152E27]">
-                Recommended Next Action
+                Recommended Next Step
               </span>
               <h4 className="text-base font-bold text-[#101C18]">
-                Export Investment-Grade PDF Audit Report
+                Export Official Audit Package
               </h4>
               <p className="text-xs text-[#5D6D63] leading-relaxed">
-                Compile all verified energy measures, measurement schedules, and Evidence Gate determinations into an official PDF document ready for submission.
+                Compile verified engineering measures, measurement boundaries, and Evidence Gate statistical determinations into a competition-ready PDF.
               </p>
               <div className="pt-1">
                 <Link
@@ -272,6 +258,29 @@ export default function AppDashboard() {
                   <span>Generate Report</span>
                 </Link>
               </div>
+            </div>
+          </div>
+
+          {/* Interactive Facility Architectural Schematic (7 cols) */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="card-editorial p-6 bg-white space-y-3">
+              <div className="flex items-center justify-between pb-3 border-b border-[#DDE3DB]">
+                <div>
+                  <span className="text-xs font-mono font-semibold uppercase text-[#152E27] tracking-wider">
+                    Interactive Facility Architectural Cutaway
+                  </span>
+                  <h3 className="text-sm font-bold text-[#101C18]">
+                    Cross-Section & Subsystem Isolation Visualizer
+                  </h3>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F4F5F0] text-[#5D6D63]">
+                  4-Story Residence Model
+                </span>
+              </div>
+              <BuildingCutaway />
+              <p className="text-[11px] text-[#5D6D63] pt-1">
+                Toggle subsystems above to highlight physical conduits, occupancy sensors, chiller setbacks, and dedicated split-core submetering boundaries across the facility.
+              </p>
             </div>
           </div>
         </div>
