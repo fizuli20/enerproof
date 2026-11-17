@@ -334,7 +334,7 @@ export default function VerifyPage() {
             <div className="p-4 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB]">
               <div className="font-semibold text-[#101C18]">Daily Resolution Benchmark</div>
               <div className="font-mono text-[#101C18] font-bold text-base mt-1">11.80% Noise Floor</div>
-              <div className="text-[11px] text-[#5D6D63] mt-0.5">BDG2 daily calendar weather model (15.0% MDE)</div>
+              <div className="text-[11px] text-[#5D6D63] mt-0.5">BDG2 daily model: 83.9% detection at 15% savings (MDE unestablished)</div>
             </div>
             <div className="p-4 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB]">
               <div className="font-semibold text-[#101C18]">Monthly Resolution Benchmark</div>

@@ -29,7 +29,7 @@
       "recommended_model": "ridge_weather_regression",
       "alternative_model": "changepoint_piecewise",
       "empirical_mean_threshold_pct": 11.8,
-      "cohort_empirical_mde": "15.0%",
+      "cohort_empirical_mde": "UNESTABLISHED (Placebo FAR 22.4% > 5%; 83.9% detection at 15% savings)",
       "ashrae_theoretical_mde_pct": 42.5,
       "pooled_power_at_5pct": 0.469,
       "historical_placebo_far": 0.2238,

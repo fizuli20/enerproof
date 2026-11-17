@@ -137,7 +137,10 @@ export default function ResearchPage() {
                   <td className="p-3 font-bold text-[#152E27]">11.80%</td>
                   <td className="p-3 text-[#152E27] font-bold">4.21% (&le; 5%)</td>
                   <td className="p-3 text-[#B74740]">22.38%</td>
-                  <td className="p-3 text-[#152E27] font-bold">15.0%</td>
+                  <td className="p-3 text-[#152E27] font-bold">
+                    83.9% at 15% savings
+                    <span className="block text-[10px] font-normal text-[#92400E]">MDE unestablished (Placebo FAR &gt; 5%)</span>
+                  </td>
                   <td className="p-3 font-sans">
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEF3C7] text-[#92400E]">PASS_SYNTH_FAIL_PLACEBO</span>
                   </td>
@@ -193,9 +196,9 @@ export default function ResearchPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#5D6D63]">
             <div className="p-4 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] space-y-2">
-              <div className="font-bold font-display text-[#B74740]">Correction 1: Single-Building 5% MDE is Unsupported</div>
+              <div className="font-bold font-display text-[#B74740]">Correction 1: Single-Building MDE Remains Unestablished</div>
               <p className="leading-relaxed">
-                In our initial exploratory runs, single buildings were hypothesized to detect 5% savings at 80% power. Rigorous repeated simulation demonstrated that empirical power for a 5% saving in single buildings is only <strong>24.7% (daily)</strong> and <strong>23.8% (hourly)</strong>. Claiming 80% power at 5% savings for unpooled buildings is scientifically unsupported.
+                In initial exploratory runs, single buildings were hypothesized to detect minor savings. In the corrected BDG2 cohort, daily ridge models achieve <strong>83.9% detection at 15% simulated savings</strong> under synthetic null, but empirical power at 5% simulated savings is only <strong>46.9%</strong>. More fundamentally, because real-world historical placebo false alarms reach <strong>22.38%</strong> (exceeding the 5.0% target), the formal minimum detectable effect (MDE) remains strictly <strong>UNESTABLISHED</strong>.
               </p>
             </div>
 

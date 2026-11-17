@@ -43,7 +43,7 @@
       "id": "CLM-005",
       "wording": "Unpooled single buildings fail to achieve 80% statistical detection power for a 5% whole-building energy reduction.",
       "category": "EXPERIMENTAL",
-      "source": "BDG2 152-building corrected benchmark; empirical detection power at 5% savings is 24.7% (daily) and 23.8% (hourly).",
+      "source": "BDG2 152-building corrected benchmark; daily ridge weather regression reaches 83.9% detection at 15% simulated savings under synthetic null, but empirical power at 5% savings is only 46.9%. Single-building MDE remains unestablished because historical placebo alarms (22.38%) exceed the 5% target.",
       "experiment_version": "Experiment-2-Corrected",
       "limitations": "Applies to whole-building counterfactual interval regression. Does not apply to direct equipment-level submetering (IPMVP Option A/B), where power is isolated.",
       "approved_for_public_presentation": true

@@ -27,7 +27,7 @@
 - [x] **Restricted Imputation:** Replaced unrestricted forward/backward fills with strict $\le 3$h imputation.
 - [x] **Standardized Baselines:** Implemented Ridge weather regression and HistGradientBoostingRegressor with documented monthly fallbacks.
 - [x] **Repeated Synthetic Controls:** 50 repeated draws with centered residuals ($\mathbb{E}[e] = 0$).
-- [x] **Power-Based MDE:** Replaced binary detection with minimum detected simulated reduction; established cohort daily MDE at 15.0%.
+- [x] **Empirical Power & Detection Rates:** Evaluated simulated reductions; achieved 83.9% detection at 15% simulated savings under synthetic null (real-world MDE unestablished due to historical placebo alarms > 5%).
 - [x] **Deterministic Evidence Gate:** Evaluates apparent savings against empirical noise floors and ASHRAE Guideline 14 Annex B Fractional Savings Uncertainty ($FSU \le 50\%$), issuing:
   - `EVIDENCE_SUPPORTS_ESTIMATE`
   - `ADDITIONAL_MEASUREMENT_REQUIRED`

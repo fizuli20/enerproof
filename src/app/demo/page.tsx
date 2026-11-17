@@ -172,9 +172,9 @@ export default function DemoPage() {
                 <div className="font-semibold text-[#101C18]">Research Findings Explored:</div>
                 <ul className="list-disc list-inside space-y-1 text-[#5D6D63]">
                   <li>Illustrative cross-building correlation floor (&rho; &asymp; 0.33) in microclimate simulations</li>
-                  <li>Single-building power @ 5%: 24.7% daily vs 23.8% hourly (MDE &ge; 15.0%)</li>
+                  <li>Daily model: 83.9% detection at 15% simulated savings under synthetic null</li>
+                  <li>Single-building MDE remains unestablished: Historical placebo alarms (22.4%) exceed 5% target</li>
                   <li>Portfolio pooling prevents naive 1/&radic;K collapse; uncalibrated portfolios return UNESTABLISHED</li>
-                  <li>False alarm rate reality: Synthetic FPR 4.2% vs historical placebo FAR 22.4%</li>
                 </ul>
               </div>
 

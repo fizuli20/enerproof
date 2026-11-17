@@ -87,7 +87,7 @@ export const HISTORICAL_RESEARCH_COHORT_BENCHMARKS: Record<
     syntheticNullFpr: 0.0421,
     historicalPlaceboFar: 0.2238,
     ashraeTheoreticalMdePct: 42.5,
-    cohortStatus: "15.0% in BDG2 cohort (Synthetic FPR <= 5%)",
+    cohortStatus: "83.9% detection at 15% simulated savings in BDG2 cohort (MDE unestablished; Placebo FAR 22.4% > 5%)",
   },
   monthly: {
     empiricalThresholdPct: 13.64,

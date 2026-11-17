@@ -278,7 +278,7 @@ export default function PortfolioPage() {
                   <div className="text-lg font-bold font-mono text-[#101C18] mt-0.5">
                     {RESEARCH_BENCHMARK_PORTFOLIO_FINDINGS.singleBuildingMedianMdeDailyPct}%
                   </div>
-                  <div className="text-[11px] text-[#5D6D63]">Single isolated building (15.0% MDE)</div>
+                  <div className="text-[11px] text-[#5D6D63]">Single building (83.9% at 15% savings; MDE unestablished)</div>
                 </div>
                 <div className="p-3.5 bg-[#F4F5F0] rounded-lg border border-[#DDE3DB]">
                   <div className="text-[#5D6D63]">Pooled MDE Floor (K=20):</div>

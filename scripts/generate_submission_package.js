@@ -149,7 +149,7 @@ async function generateAccessPdf(outDir) {
     ["Pre-Test Benchmark Cohort", "152 university & lodging buildings from BDG2 (Nature Scientific Data)"],
     ["Evaluation Abstentions", "9 test-period dropouts recorded as abstentions (143 completed buildings)"],
     ["Simulation Resolution", "Hourly-first simulation with exact mathematical sum-aggregation to daily/monthly"],
-    ["Empirical Evidence Gates", "Daily threshold: 11.8% (Synthetic FPR: 4.21% <= 5%, Cohort MDE: 15.0%)"],
+    ["Empirical Evidence Gates", "Daily threshold: 11.8% (Synthetic FPR: 4.21% <= 5%, 83.9% detection at 15% savings; MDE unestablished)"],
     ["ASHRAE Guideline 14 Annex B", "Deterministic refusal when FSU > 50% or data quality fails"],
   ];
 
@@ -257,7 +257,7 @@ function generateTechnicalValidationPdf(outDir) {
 
   const resRows = [
     ["Hourly Interval", "Ridge Weather", "8.37%", "6.98%", "28.67%", "UNESTABLISHED (FPR > 5%)", "FAIL_BOTH_CONTROLS"],
-    ["Daily Interval", "Ridge Weather", "11.80%", "4.21% (<= 5%)", "22.38%", "15.0%", "PASS_SYNTH_FAIL_PLACEBO"],
+    ["Daily Interval", "Ridge Weather", "11.80%", "4.21% (<= 5%)", "22.38%", "83.9% @ 15% (Unest.)", "PASS_SYNTH_FAIL_PLACEBO"],
     ["Monthly Bill", "Ridge Weather", "13.64%", "6.81%", "18.18%", "UNESTABLISHED (FPR > 5%)", "FAIL_BOTH_CONTROLS"],
   ];
 
@@ -527,7 +527,7 @@ function generateChecklistMd(outDir) {
 - [x] **Restricted Imputation:** Replaced unrestricted forward/backward fills with strict $\\le 3$h imputation.
 - [x] **Standardized Baselines:** Implemented Ridge weather regression and HistGradientBoostingRegressor with documented monthly fallbacks.
 - [x] **Repeated Synthetic Controls:** 50 repeated draws with centered residuals ($\\mathbb{E}[e] = 0$).
-- [x] **Power-Based MDE:** Replaced binary detection with minimum detected simulated reduction; established cohort daily MDE at 15.0%.
+- [x] **Empirical Power & Detection Rates:** Evaluated simulated reductions; achieved 83.9% detection at 15% simulated savings under synthetic null (real-world MDE unestablished due to historical placebo alarms > 5%).
 - [x] **Deterministic Evidence Gate:** Evaluates apparent savings against empirical noise floors and ASHRAE Guideline 14 Annex B Fractional Savings Uncertainty ($FSU \\le 50\\%$), issuing:
   - \`EVIDENCE_SUPPORTS_ESTIMATE\`
   - \`ADDITIONAL_MEASUREMENT_REQUIRED\`

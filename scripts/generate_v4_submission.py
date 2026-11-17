@@ -275,7 +275,7 @@ def generate_v4_proposal_pdf():
     res_data = [
         [Paragraph("<b>Resolution Tier</b>", body_style), Paragraph("<b>Primary Baseline Model</b>", body_style), Paragraph("<b>Calibrated Noise Threshold</b>", body_style), Paragraph("<b>Synthetic Null FPR (&le;5%)</b>", body_style), Paragraph("<b>Historical Placebo FAR</b>", body_style), Paragraph("<b>Cohort Empirical MDE</b>", body_style), Paragraph("<b>Quality Gate Verdict</b>", body_style)],
         [Paragraph("<b>Hourly Interval</b>", body_style), Paragraph("Ridge weather regression", body_style), Paragraph("8.37%", body_style), Paragraph("6.98% (Exceeds 5%)", body_style), Paragraph("28.67%", body_style), Paragraph("UNESTABLISHED", body_style), Paragraph("<font color='#991B1B'><b>FAIL_BOTH_CONTROLS</b></font>", body_style)],
-        [Paragraph("<b>Daily Interval</b>", body_style), Paragraph("Ridge weather regression", body_style), Paragraph("11.80%", body_style), Paragraph("4.21% (Passes &le;5%)", body_style), Paragraph("22.38%", body_style), Paragraph("15.0%", body_style), Paragraph("<font color='#92400E'><b>PASS_SYNTH_FAIL_PLACEBO</b></font>", body_style)],
+        [Paragraph("<b>Daily Interval</b>", body_style), Paragraph("Ridge weather regression", body_style), Paragraph("11.80%", body_style), Paragraph("4.21% (Passes &le;5%)", body_style), Paragraph("22.38%", body_style), Paragraph("83.9% @ 15% sav.<br/><font size='6.5' color='#92400E'>(MDE unestablished)</font>", body_style), Paragraph("<font color='#92400E'><b>PASS_SYNTH_FAIL_PLACEBO</b></font>", body_style)],
         [Paragraph("<b>Monthly Billing</b>", body_style), Paragraph("HistGradientBoosting / Fallback", body_style), Paragraph("13.64%", body_style), Paragraph("3.85% (Passes &le;5%)", body_style), Paragraph("18.18%", body_style), Paragraph("UNESTABLISHED (n&lt;12)", body_style), Paragraph("<font color='#92400E'><b>PASS_SYNTH_ONLY</b></font>", body_style)],
     ]
     t2 = Table(res_data, colWidths=[70, 95, 65, 75, 70, 75, 90])
@@ -292,7 +292,7 @@ def generate_v4_proposal_pdf():
     story.append(Spacer(1, 3))
 
     story.append(Paragraph("Core Scientific Findings & Safeguards", h2_style))
-    story.append(Paragraph("• <b>Individual Building Detection Limits:</b> Empirical power to detect a 5% saving in an individual building under whole-facility Option C is only <b>24.7% (daily)</b> and <b>23.8% (hourly)</b>. Unsubstantiated claims of universal 5% MDE are scientifically rejected.", bullet_style))
+    story.append(Paragraph("• <b>Individual Building Detection Limits & Unestablished MDE:</b> In the corrected BDG2 cohort, daily ridge models achieve <b>83.9% detection at 15% simulated savings</b> under synthetic null, but power at 5% savings is only 46.9%. Because historical placebo alarms (22.38%) exceed the 5% target, real-world MDE remains <b>UNESTABLISHED</b>. Claims of universal operational MDE are scientifically rejected.", bullet_style))
     story.append(Paragraph("• <b>Historical Placebo False Alarms:</b> Historical placebo windows exhibited false alarm rates of 18.2% to 28.7% due to operational drift, academic calendar shifts, and equipment churn. Historical periods cannot be presented as stationary null controls.", bullet_style))
     story.append(Paragraph("• <b>The Residual Correlation Floor (Illustrative &rho; &asymp; 0.33):</b> Shared weather and regional schedules create non-zero error correlation across facilities. Portfolio uncertainty does not decay to zero as 1/&radic;K, but approaches an asymptotic floor &sigma;&radic;&rho;, inflating pooled variance by 2.6x to 3.8x over naive independence. Custom user portfolios require empirical covariance &Sigma; or return UNESTABLISHED.", bullet_style))
     story.append(Paragraph("• <b>Universal Operational Thresholds Removed:</b> Universal cohort averages are strictly separated into an archived research visualization. Active building verifications are evaluated exclusively against each building's own empirical calibration diagnostics.", bullet_style))
@@ -822,7 +822,7 @@ def generate_v4_package_and_readme():
    - `ExpectedVsObservedVisual.tsx`: Interactive Three-Tier Visual anchoring Tier 1 (Engineering Estimate), Tier 2 (Confounded Meter Delta), and Tier 3 (Counterfactual with ASHRAE 14 uncertainty cone).
    - `EvidenceGateVisual.tsx`: 3-gate sequential decision flowchart with interactive scenario switching.
    - `PortfolioMapVisual.tsx`: Multi-facility campus map displaying the 4 Baku facilities, shared weather station, and illustrative correlation floor (\\rho \\approx 0.33).
-   - `ResearchHeroVisual.tsx`: BDG2 152-building empirical cohort benchmark card showing hourly, daily, and monthly empirical detection limits and placebo limitations.
+   - `ResearchHeroVisual.tsx`: BDG2 152-building empirical cohort benchmark card showing hourly, daily (83.9% detection at 15% simulated savings; MDE unestablished), and monthly empirical limits.
 
 2. **Asymmetric Editorial Hero & 6-Chapter Landing Narrative:**
    - Reduced visible body copy by 35%, elevating visual storytelling and clarity.
