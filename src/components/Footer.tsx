@@ -89,7 +89,7 @@ export function Footer() {
                 </a>
               </li>
               <li className="pt-2 text-[11px] text-[#5D6D63]">
-                Release Tag: <code className="text-[#D9FF91] font-mono">v3.0.0-cececo</code>
+                Release Tag: <code className="text-[#D9FF91] font-mono">v4.0.0-cececo-final</code>
               </li>
             </ul>
           </div>
