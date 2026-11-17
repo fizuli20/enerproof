@@ -328,18 +328,18 @@ export default function VerifyPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div className="p-4 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB]">
               <div className="font-semibold text-[#101C18]">Hourly Resolution Benchmark</div>
-              <div className="font-mono text-[#101C18] font-bold text-base mt-1">8.37% Empirical MDE</div>
-              <div className="text-[11px] text-[#5D6D63] mt-0.5">BDG2 152-building median noise floor</div>
+              <div className="font-mono text-[#101C18] font-bold text-base mt-1">8.37% Noise Floor</div>
+              <div className="text-[11px] text-[#5D6D63] mt-0.5">BDG2 152-building median (MDE Unestablished)</div>
             </div>
             <div className="p-4 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB]">
               <div className="font-semibold text-[#101C18]">Daily Resolution Benchmark</div>
-              <div className="font-mono text-[#101C18] font-bold text-base mt-1">11.80% Empirical MDE</div>
-              <div className="text-[11px] text-[#5D6D63] mt-0.5">BDG2 daily calendar weather model</div>
+              <div className="font-mono text-[#101C18] font-bold text-base mt-1">11.80% Noise Floor</div>
+              <div className="text-[11px] text-[#5D6D63] mt-0.5">BDG2 daily calendar weather model (15.0% MDE)</div>
             </div>
             <div className="p-4 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB]">
               <div className="font-semibold text-[#101C18]">Monthly Resolution Benchmark</div>
-              <div className="font-mono text-[#101C18] font-bold text-base mt-1">13.64% Empirical MDE</div>
-              <div className="text-[11px] text-[#5D6D63] mt-0.5">Low degrees of freedom penalty</div>
+              <div className="font-mono text-[#101C18] font-bold text-base mt-1">13.64% Noise Floor</div>
+              <div className="text-[11px] text-[#5D6D63] mt-0.5">Low degrees of freedom penalty (n&lt;12 Unestablished)</div>
             </div>
           </div>
 

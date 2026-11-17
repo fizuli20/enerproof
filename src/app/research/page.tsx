@@ -139,7 +139,7 @@ export default function ResearchPage() {
                   <td className="p-3 text-[#B74740]">22.38%</td>
                   <td className="p-3 text-[#152E27] font-bold">15.0%</td>
                   <td className="p-3 font-sans">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#152E27] text-[#D9FF91]">PASS_SYNTH_CONTROL</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEF3C7] text-[#92400E]">PASS_SYNTH_FAIL_PLACEBO</span>
                   </td>
                 </tr>
                 <tr className="hover:bg-[#F4F5F0]/50">
@@ -158,9 +158,9 @@ export default function ResearchPage() {
           </div>
 
           <div className="p-4 rounded-xl bg-[#FEF3C7] border border-[#FDE68A] text-xs text-[#92400E] space-y-1">
-            <div className="font-bold">Crucial Scientific Finding on Historical Placebos:</div>
+            <div className="font-bold">Crucial Scientific Finding on Historical Placebos & Quality Gate Verdicts:</div>
             <p className="leading-relaxed">
-              Historical placebo windows (pre-intervention periods tested as if interventions occurred) exhibited high false-alarm rates (18.2% to 28.7%) across all resolutions. This proves that real commercial and educational buildings undergo continuous operational drift, academic schedule changes, and unrecorded equipment swaps. A real-world placebo window cannot be treated as a confirmed stationary null control.
+              While the daily interval model achieves a synthetic null false positive rate of 4.21% (&le; 5.0%), it does <strong>not</strong> pass the full scientific gate because its historical placebo false alarm rate reaches <strong>22.38%</strong>. Real commercial and educational buildings undergo continuous operational drift, academic schedule changes, and unrecorded equipment swaps. Because historical placebos exhibit 18.2% to 28.7% false alarms across all resolutions, satisfying synthetic null controls alone is insufficient proof of real-world calibration.
             </p>
           </div>
         </section>
@@ -207,9 +207,9 @@ export default function ResearchPage() {
             </div>
 
             <div className="p-4 rounded-xl bg-[#F4F5F0] border border-[#DDE3DB] space-y-2">
-              <div className="font-bold font-display text-[#B74740]">Correction 3: Cross-Building Residual Correlation (&rho; = 0.33)</div>
+              <div className="font-bold font-display text-[#B74740]">Correction 3: Cross-Building Residual Correlation (Illustrative &rho; = 0.33 Model)</div>
               <p className="leading-relaxed">
-                Naive ESCO portfolio models assume building residual errors are mutually independent, predicting noise diminishes as 1/&radic;K. In reality, same-campus buildings share weather microclimates, academic calendars, and grid dynamics, creating an intra-site residual correlation of <strong>&rho; &asymp; 0.33</strong>. The portfolio noise floor asymptotes to &sigma;&radic;&rho;, not zero.
+                Naive ESCO portfolio models assume building residual errors are mutually independent, predicting noise diminishes as 1/&radic;K. In shared microclimate simulations, an illustrative cross-building correlation of <strong>&rho; &asymp; 0.33</strong> models shared weather shocks, causing portfolio noise to asymptote to &sigma;&radic;&rho; rather than zero. For arbitrary user facilities, empirical residual covariance (&Sigma;) must be directly provided; otherwise, portfolio uncertainty is strictly returned as <strong>UNESTABLISHED</strong>.
               </p>
             </div>
 

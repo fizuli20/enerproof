@@ -22,7 +22,7 @@ Azerbaijan's subsidized electricity tariffs (0.125 AZN / ~$0.073 per kWh) and fi
    - `EVIDENCE_SUPPORTS_ESTIMATE`
    - `ADDITIONAL_MEASUREMENT_REQUIRED`
    - `INSUFFICIENT_EVIDENCE`
-5. **Multi-Building Portfolio Aggregator:** Models noise pooling across $K$ buildings in ESCO performance contracts while accounting for intra-site cross-building residual correlation ($\rho \approx 0.33$).
+5. **Multi-Building Portfolio Aggregator:** Models noise pooling across $K$ buildings in ESCO performance contracts while illustrating intra-site cross-building residual correlation ($\rho \approx 0.33$ in shared microclimate simulations; requiring empirical covariance $\Sigma$ for custom portfolios).
 6. **Investment-Grade PDF & Data Export:** 1-click client-side export of audit-grade PDF reports, JSON schemas, and CSV tables.
 
 ---

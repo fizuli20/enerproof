@@ -32,28 +32,28 @@ export function ResearchHeroVisual() {
             Single-Building Detection Limits
           </h3>
           <p className="text-xs text-[#A3B8AC] leading-relaxed">
-            Repeated synthetic null draws prove that an isolated single building cannot detect 5% savings at 80% power from whole-building meters alone.
+            Repeated synthetic null draws and historical placebos prove that single buildings cannot detect 5% savings at 80% power from whole-building meters alone; historical placebos exhibit 18.2%–28.7% operational drift.
           </p>
         </div>
 
         {/* 3 Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full md:w-auto font-mono text-xs">
           <div className="p-3.5 bg-[#152E27] rounded-xl border border-white/10 space-y-1">
-            <span className="text-[#A3B8AC] text-[10px] block">Hourly MDE</span>
-            <span className="text-lg font-bold text-[#FFFFFF] block">4.2%</span>
-            <span className="text-[10px] text-[#B74740] block">FPR &gt; 5% (Fails Gate)</span>
+            <span className="text-[#A3B8AC] text-[10px] block">Hourly Interval</span>
+            <span className="text-lg font-bold text-[#FFFFFF] block">8.4% Floor</span>
+            <span className="text-[10px] text-[#B74740] block">Placebo FAR 28.7% (Unestablished)</span>
           </div>
 
-          <div className="p-3.5 bg-[#152E27] rounded-xl border border-[#D9FF91]/40 space-y-1 ring-1 ring-[#D9FF91]/30">
-            <span className="text-[#D9FF91] text-[10px] block">Daily MDE</span>
-            <span className="text-lg font-bold text-[#D9FF91] block">5.1%</span>
-            <span className="text-[10px] text-[#D9FF91] block">4.21% FPR (Passes Gate)</span>
+          <div className="p-3.5 bg-[#152E27] rounded-xl border border-[#D9FF91]/30 space-y-1">
+            <span className="text-[#D9FF91] text-[10px] block">Daily Interval</span>
+            <span className="text-lg font-bold text-[#D9FF91] block">15.0% MDE</span>
+            <span className="text-[10px] text-[#FDE68A] block">Synth 4.2% • Placebo 22.4% (Partial)</span>
           </div>
 
           <div className="p-3.5 bg-[#152E27] rounded-xl border border-white/10 space-y-1">
-            <span className="text-[#A3B8AC] text-[10px] block">Monthly MDE</span>
-            <span className="text-lg font-bold text-[#FFFFFF] block">10.5%</span>
-            <span className="text-[10px] text-[#B74740] block">Too coarse for operational ECMs</span>
+            <span className="text-[#A3B8AC] text-[10px] block">Monthly Utility Bill</span>
+            <span className="text-lg font-bold text-[#FFFFFF] block">13.6% Floor</span>
+            <span className="text-[10px] text-[#B74740] block">Placebo FAR 18.2% (n&lt;12 Unestablished)</span>
           </div>
         </div>
       </div>

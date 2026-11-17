@@ -171,10 +171,10 @@ export default function DemoPage() {
               <div className="p-3.5 bg-[#F4F5F0] rounded-xl border border-[#DDE3DB] space-y-2 text-xs">
                 <div className="font-semibold text-[#101C18]">Research Findings Explored:</div>
                 <ul className="list-disc list-inside space-y-1 text-[#5D6D63]">
-                  <li>Observed correlation floor (&rho; = 0.33) in building residuals</li>
-                  <li>Single-building MDE: 5.1% daily vs 10.5% monthly</li>
-                  <li>Portfolio pooling floor prevents 1/&radic;K asymptotic collapse</li>
-                  <li>False alarm rate control: 1.3% hourly, 0.0% daily</li>
+                  <li>Illustrative cross-building correlation floor (&rho; &asymp; 0.33) in microclimate simulations</li>
+                  <li>Single-building power @ 5%: 24.7% daily vs 23.8% hourly (MDE &ge; 15.0%)</li>
+                  <li>Portfolio pooling prevents naive 1/&radic;K collapse; uncalibrated portfolios return UNESTABLISHED</li>
+                  <li>False alarm rate reality: Synthetic FPR 4.2% vs historical placebo FAR 22.4%</li>
                 </ul>
               </div>
 

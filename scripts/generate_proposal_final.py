@@ -345,7 +345,7 @@ def build_proposal_pdf(output_path):
 
     story.append(Paragraph("4. Multi-Building Portfolio Aggregation: Uncertainty vs Residual Correlation Floor", body_bold))
     story.append(Paragraph(
-        "In ESCO and Energy Efficiency Fund portfolio pooling, independent error cancellation is often naively assumed (&sigma;<sub>P</sub> = &sigma; / &radic;K). EnerProof enforces mathematical integrity: in the User Portfolio Calculator, if empirical cross-building error covariance &Sigma; is missing, portfolio uncertainty is returned as <b>UNESTABLISHED</b>. In the Research Benchmark Explorer, EnerProof incorporates the archived Building Data Genome 2 (BDG2) empirical correlation floor (&rho; &asymp; 0.33), proving that portfolio noise never cancels to zero as K &rarr; &infin;, establishing an asymptotic portfolio uncertainty floor of ~4.2%.",
+        "In ESCO and Energy Efficiency Fund portfolio pooling, independent error cancellation is often naively assumed (&sigma;<sub>P</sub> = &sigma; / &radic;K). EnerProof enforces mathematical integrity: in the User Portfolio Calculator, if empirical cross-building error covariance &Sigma; is missing, portfolio uncertainty is returned as <b>UNESTABLISHED</b>. In the Research Benchmark Explorer, EnerProof incorporates an illustrative Building Data Genome 2 (BDG2) cross-building correlation model (&rho; &asymp; 0.33), demonstrating that portfolio noise never cancels to zero as K &rarr; &infin; under shared weather shocks.",
         body_style
     ))
 

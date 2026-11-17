@@ -161,6 +161,6 @@ export const RESEARCH_BENCHMARK_PORTFOLIO_FINDINGS = {
   singleBuildingMedianMdeDailyPct: 11.8,
   pooledMdeK20DailyPct: 7.2,
   description:
-    "Empirical cross-building residual covariance analysis across 152 higher education and commercial buildings. Demonstrates that shared weather and academic calendar shocks impose an empirical correlation floor (rho ~ 0.33), preventing pooled portfolio variance from decaying to zero.",
+    "Illustrative cross-building residual covariance analysis across 152 higher education and commercial buildings. Demonstrates that shared weather and academic calendar shocks impose a simulated correlation floor (rho ~ 0.33), preventing pooled portfolio variance from decaying to zero.",
 };
 

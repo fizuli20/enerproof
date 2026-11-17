@@ -101,7 +101,7 @@ export default function AboutPage() {
             </div>
             <h4 className="text-sm font-bold font-display text-[#101C18]">Empirical Grounding</h4>
             <p className="text-xs text-[#5D6D63] leading-relaxed">
-              Tested on 152 real university campus buildings from the BDG2 dataset, with repeated synthetic controls and accounting for intra-site correlation (&rho; = 0.33).
+              Tested on 152 real university campus buildings from the BDG2 dataset, with repeated synthetic controls, historical placebo evaluation, and intra-site correlation modeling.
             </p>
           </div>
 

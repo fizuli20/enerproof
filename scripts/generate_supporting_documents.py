@@ -759,7 +759,7 @@ def generate_pitch_deck_pdf():
                 Paragraph("• <b>No Universal Cohort Thresholds:</b> Decision thresholds are computed from each building's own empirical variance, sample sizes (m, n), and lag-1 autocorrelation (r₁).", body_style),
                 Paragraph("• <b>Autocorrelation Variance Multiplier:</b> Corrects for serial persistence via (1+r₁)/(1-r₁), preventing false-positive savings claims.", body_style),
                 Paragraph("• <b>ASHRAE Guideline 14 Annex B Compliance:</b> Evaluates Fractional Savings Uncertainty (FSU &le; 50%) before validating any counterfactual.", body_style),
-                Paragraph("• <b>Portfolio Covariance Reality:</b> Proves that cross-building error correlation (&rho;&asymp;0.33) establishes an asymptotic noise floor of ~4.2%, preventing reckless financial securitization.", body_style),
+                Paragraph("• <b>Portfolio Covariance Modeling:</b> Illustrates how cross-building error correlation (&rho;&asymp;0.33) bounds asymptotic noise, requiring empirical covariance (&Sigma;) or returning UNESTABLISHED.", body_style),
             ]
         },
         # Slide 5: Product & Features

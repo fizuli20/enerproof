@@ -260,7 +260,7 @@ export default function PortfolioPage() {
                 </span>
               </div>
               <h3 className="text-lg font-bold font-display text-[#101C18]">
-                Cross-Building Residual Correlation Floor (&rho; = 0.33)
+                Cross-Building Residual Correlation Floor Simulation (&rho; = 0.33)
               </h3>
               <p className="text-xs text-[#5D6D63] leading-relaxed">
                 {RESEARCH_BENCHMARK_PORTFOLIO_FINDINGS.description}
@@ -274,11 +274,11 @@ export default function PortfolioPage() {
                   <div className="text-[11px] text-[#5D6D63]">Shared weather & calendar shocks</div>
                 </div>
                 <div className="p-3.5 bg-[#F4F5F0] rounded-lg border border-[#DDE3DB]">
-                  <div className="text-[#5D6D63]">Median Daily MDE (K=1):</div>
+                  <div className="text-[#5D6D63]">Daily Noise Threshold:</div>
                   <div className="text-lg font-bold font-mono text-[#101C18] mt-0.5">
                     {RESEARCH_BENCHMARK_PORTFOLIO_FINDINGS.singleBuildingMedianMdeDailyPct}%
                   </div>
-                  <div className="text-[11px] text-[#5D6D63]">Single isolated building</div>
+                  <div className="text-[11px] text-[#5D6D63]">Single isolated building (15.0% MDE)</div>
                 </div>
                 <div className="p-3.5 bg-[#F4F5F0] rounded-lg border border-[#DDE3DB]">
                   <div className="text-[#5D6D63]">Pooled MDE Floor (K=20):</div>

@@ -32,8 +32,8 @@
    - `SmartMeterDiagram.tsx`: 4-step telemetry ingestion workflow + split-core CT hardware installation schematic.
    - `ExpectedVsObservedVisual.tsx`: Interactive Three-Tier Visual anchoring Tier 1 (Engineering Estimate), Tier 2 (Confounded Meter Delta), and Tier 3 (Counterfactual with ASHRAE 14 uncertainty cone).
    - `EvidenceGateVisual.tsx`: 3-gate sequential decision flowchart with interactive scenario switching.
-   - `PortfolioMapVisual.tsx`: Multi-facility campus map displaying the 4 Baku facilities, shared weather station, and correlation floor (\rho \approx 0.33).
-   - `ResearchHeroVisual.tsx`: BDG2 152-building empirical cohort benchmark card showing hourly, daily (5.1% MDE), and monthly detection limits.
+   - `PortfolioMapVisual.tsx`: Multi-facility campus map displaying the 4 Baku facilities, shared weather station, and illustrative correlation floor (\rho \approx 0.33).
+   - `ResearchHeroVisual.tsx`: BDG2 152-building empirical cohort benchmark card showing hourly, daily, and monthly empirical detection limits and placebo limitations.
 
 2. **Asymmetric Editorial Hero & 6-Chapter Landing Narrative:**
    - Reduced visible body copy by 35%, elevating visual storytelling and clarity.

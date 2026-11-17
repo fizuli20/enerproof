@@ -22,7 +22,7 @@ export function PortfolioMapVisual() {
             Multi-Building Campus Portfolio Risk &amp; Residual Correlation
           </h4>
           <p className="text-xs text-[#5D6D63]">
-            Cross-building correlation (&rho; &asymp; 0.33) prevents noise from decaying asymptotically to zero.
+            Illustrative simulation of cross-building correlation (&rho; &asymp; 0.33) modeling shared weather shocks. Arbitrary user portfolios require empirical covariance matrices or return UNESTABLISHED.
           </p>
         </div>
 
@@ -35,7 +35,7 @@ export function PortfolioMapVisual() {
                 : "text-[#5D6D63] hover:text-[#101C18]"
             }`}
           >
-            Empirical Floor (&rho; = 0.33)
+            Illustrative Model (&rho; = 0.33)
           </button>
           <button
             onClick={() => setModelType("naive")}
@@ -115,10 +115,10 @@ export function PortfolioMapVisual() {
         {/* Floating Metrics Badge in Bottom Left */}
         <div className="absolute bottom-3 left-3 bg-[#0D1A16]/90 backdrop-blur-md p-2.5 rounded-lg border border-white/10 text-xs font-mono">
           <div className="text-[10px] text-[#8EA094]">
-            {modelType === "empirical" ? "Empirical BDG2 Noise Model" : "Naive Independent Model"}
+            {modelType === "empirical" ? "Illustrative Microclimate Model (BDG2 Simulation)" : "Naive Independent Model"}
           </div>
           <div className="text-[#D9FF91] font-bold mt-0.5">
-            {modelType === "empirical" ? "Residual Correlation: ρ = 0.33 (Asymptotic Floor)" : "Assumed Independence: ρ = 0.0 (Unrealistic)"}
+            {modelType === "empirical" ? "Illustrative Correlation: ρ = 0.33 (Theoretical Floor)" : "Assumed Independence: ρ = 0.0 (Unrealistic)"}
           </div>
         </div>
       </div>
@@ -128,7 +128,7 @@ export function PortfolioMapVisual() {
           <ShieldCheck className="w-4 h-4 text-[#152E27] shrink-0" />
           <span>
             {modelType === "empirical"
-              ? "Same-campus facilities share microclimates, seasonal heatwaves, and university term schedules. True portfolio variance asymptotes to σ√ρ rather than zero."
+              ? "Illustrative Model: Same-campus facilities share microclimates and schedules, so portfolio variance asymptotes to σ√ρ rather than zero. Custom user portfolios require empirical covariance Σ or return UNESTABLISHED."
               : "Assuming buildings are independent artificially understates financial risk for performance contracts and the Energy Efficiency Fund."}
           </span>
         </div>
